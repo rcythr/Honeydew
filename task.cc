@@ -1,10 +1,10 @@
-// This file is part of RFUS (Rcythr's Fast Userspace Scheduling)
+// This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #include "task.h"
 #include "join_semaphore.h"
 
-using namespace rcythr;
+using namespace rfus;
 
 task_t::task_t(std::function<void()> action, size_t worker, uint64_t deadline)
     : action(action)

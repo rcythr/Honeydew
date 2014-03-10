@@ -1,4 +1,4 @@
-// This file is part of RFUS (Rcythr's Fast Userspace Scheduling)
+// This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #include "rfus.h"
@@ -11,10 +11,10 @@
 #include <thread>
 #include <vector>
 
-using namespace rcythr;
+using namespace rfus;
 
 // Global State Management
-RFUSInterface* rcythr::RFUS;
+RFUSInterface* rfus::RFUS;
 
 typedef CountingWrapper<Queue<task_t>> CountingQueue;
 typedef CountingWrapper<PriorityQueue<task_t>> PriorityCountingQueue;
@@ -124,7 +124,7 @@ struct RFUSImpl : public RFUSInterface
 *                       if the number of resources > num_threads some resources will share a thread.
 * @param step_size the maximum number of events each worker removes from the queue at a time. 0 is infinite.
 */
-RFUSInterface* rcythr::createRFUS(RFUSType type, size_t num_threads, size_t step_size)
+RFUSInterface* rfus::createRFUS(RFUSType type, size_t num_threads, size_t step_size)
 {
     switch(type)
     {

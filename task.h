@@ -1,4 +1,4 @@
-// This file is part of RFUS (Rcythr's Fast Userspace Scheduling)
+// This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace rcythr
+namespace rfus
 {
 
 /// Forward Declarations
