@@ -24,6 +24,7 @@ library: clean
 	cp rfus.h include/rfus.h
 	cp rfus_type.h include/rfus_type.h
 	cp task.h include/task.h
+	cp pipeline.h include/pipeline.h
 
 tests:
 	mkdir bin
@@ -31,4 +32,5 @@ tests:
 	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin_priority examples/round_robin_priority.cc -Iinclude -Llib -lrfus
 	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy examples/least_busy.cc -Iinclude -Llib -lrfus
 	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy_priority examples/least_busy_priority.cc -Iinclude -Llib -lrfus
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/pipeline_test examples/pipeline_test.cc -Iinclude -Llib -lrfus
 
