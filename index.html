@@ -110,7 +110,7 @@
 </ul><h2>
 <a name="then-relationships" class="anchor" href="#then-relationships"><span class="octicon octicon-link"></span></a>Then Relationships</h2>
 
-<p>Below two tasks are created which will happen, in order, possibly on different threads. The use of colors in these diagrams designates different "rows" of tasks which will execute concurrently vs sequentially.</p>
+<p>Below two tasks are created which will happen, in order, possibly on different threads. The use of colors in these diagrams designates different "rows" of tasks. Same color executes concurrently, different executes sequentially.</p>
 
 <p align="center">
 <img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/then.png" alt="Then Relationship Diagram"></p>
@@ -165,15 +165,11 @@
 
 <p>Finally it is possible to tie tasks to certain workers. This can be useful to avoid mutexes.</p>
 
-<p>In the code below the second task will happen strictly after the first task even though an <strong>also</strong> relationship is used. This is because the first and second tasks share the same worker. The third task may happen at the same time as either of the two workers. This is because it is tied to a totally different worker than the previous two tasks.</p>
+<p>In the code below <strong>funcA</strong> and <strong>funcB</strong> will not execute concurrently even though an <strong>also</strong> relationship is used. This is because the <strong>funcA</strong> and <strong>funcB</strong> share the same worker. By contrast, <strong>funcC</strong> may happen at the same time as either <strong>funcA</strong> or <strong>funcB</strong>. This is because it is tied to a totally different worker than the previous two tasks.</p>
 
-<pre><code>    RFUS-&gt;post(Task([] () {
-        printf("I HAPPEN FIRST\n");
-    }, 1).also([] () {
-        printf("I HAPPEN SECOND\n");
-    }, 1).also([] () {
-        printf("I HAPPEN AT THE SAME TIME.\n");
-    }, 2);
+<p>Note: A worker value of 0 indicates that the task can be scheduled onto any thread.</p>
+
+<pre><code>    RFUS-&gt;post(Task(funcA, 1).also(funcB, 1).also(funcC, 2);
 </code></pre>
 
 <h2>
@@ -192,7 +188,7 @@
 
 <p>Pipelines support the same <strong>action</strong>, <strong>[worker]</strong>, <strong>[deadline]</strong> function arguments as the <strong>Task</strong> class. </p>
 
-<p>Ideally pipelines will always end with a function that returns <strong>void</strong>. However, in many cases this is not possible, so instead of adding a dummy function at the end of the pipeline, resources can be saved by using <strong>endWith</strong> instead of <strong>then</strong>. For example:</p>
+<p>Ideally pipelines will always end with a function that returns <strong>void</strong>. However, in many cases this is not possible, so instead of adding a dummy function at the end of the pipeline, resources can be saved by using <strong>closeWith</strong> instead of <strong>then</strong>. For example:</p>
 
 <pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
         return 42;
@@ -212,7 +208,10 @@
 <li>Forked Pipeline (Takes Parameter, Parameter is shared)</li>
 </ul><p>When you are working with pipelines you do not need to specify which type of pipeline to create - this is done automatically. You simply need to be aware what operations are available to you based on the current pipeline.</p>
 
-<p>The <strong>Pipeline::start()</strong> function handles the first transition from a <strong>Void Pipeline</strong> to a <strong>Normal Pipeline</strong> for you automatically. Thus pipelines always start in the <strong>Normal Pipeline</strong>. The following table shows the effects of various member functions on the state of the pipeline:</p>
+<p>The <strong>Pipeline::start()</strong> function handles the first transition from a <strong>Void Pipeline</strong> to a <strong>Normal Pipeline</strong> for you automatically. Thus pipelines always start in the <strong>Normal Pipeline</strong>. The following image/table shows the effects of various member functions on the state of the pipeline:</p>
+
+<p align="center">
+<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/pipeline_state.png" alt="Pipeline Type State Diagram"></p>
 
 <h3>
 <a name="normal-pipeline" class="anchor" href="#normal-pipeline"><span class="octicon octicon-link"></span></a>Normal Pipeline</h3>
@@ -247,6 +246,9 @@
 <p><strong>Normal Pipelines</strong> and <strong>Void Pipelines</strong> support the <strong>then</strong> operation. The <strong>then</strong> operation will complete the given task after the last tasks have completed (exclusing <strong>fork</strong>). If you only use the <strong>then</strong> operation you will never find yourself in the <strong>Forked Pipeline</strong>.</p>
 
 <p>If you use the <strong>split</strong> function in the <strong>Normal Pipeline</strong> you will find yourself in the <strong>Forked Pipeline</strong>. The return value before the <strong>split</strong> will be passed into all subsequent calls up to and including the <strong>join</strong> call that leaves the <strong>Forked Pipeline</strong>. Thus the <strong>split</strong> is equivalent to a <strong>then</strong> that can share the return value from before it with subsequent calls. All return values in the <strong>Forked Pipeline</strong> are ignored except for the final <strong>join</strong> call that leaves the <strong>Forked Pipeline</strong>. The example below illustrates the semantics of <strong>Pipelines</strong>.</p>
+
+<p align="center">
+<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/pipeline_example.png" alt="Pipeline Example Diagram"></p>
 
 <pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
         return 42;
