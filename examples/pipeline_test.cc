@@ -33,4 +33,22 @@ int main(int argc, char* argv[])
 
     cv.wait(lg);
 
+    RFUS->post(Pipeline::start<int>([] () {
+        return 42;
+    }).split<int>([] (int val) { // In: 42, Out: 45.
+        return val+3;
+    }).also<void>([] (int val) { // In 42
+        printf("%d\n", val);
+    }).also<int>([] (int val) {  // In 42, Out 45 (discarded)
+        return val+3;
+    }).join<int>([] (int val) {  // In 42, Out 46
+        printf("%d\n", val);
+        return val+4;
+    }).then([&] (int val) {      // In 46
+        printf("%d\n", val);
+        cv.notify_all();
+    }).close()); 
+
+    cv.wait(lg);
+
 }

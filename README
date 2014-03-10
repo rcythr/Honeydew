@@ -78,20 +78,32 @@ threads.
 	RFUS->post(Task(funcA).then(funcB));
 
 == Also Relationships ==
-Below two tasks are created which may happen concurrently on two different 
-threads.
+Below two tasks (funcA and funcB) are created which may happen concurrently on 
+two different threads. All following tasks will wait for the also to complete. 
+Afterwards the following task (funcC) will be completed.
 
-	RFUS->post(Task(funcA).also(funcB));
+	RFUS->post(Task(funcA).also(funcB).then(funcC));
 
-== Mixing Then and Also Relationships ==
-Then and Also relationships may be mixed to great effect. A then relationship 
-after an also relationship will cause the then relationship to run only after 
-all of the tasks in the also relationship have completed. 
+== Fork Relationships ==
+Below two tasks (funcA and funcB) are created which may happen concurrently on 
+two different threads. This is distinct from "also" in that it does not block 
+subsequent tasks from executing immediately.
+    
+    RFUS->post(Task(funcA).fork(funcB).then(funcC));
+
+== Mixing Then, Also, and Fork Relationships ==
+"Then", "also", and "fork" relationships may be mixed to great effect. A then 
+relationship after an also relationship will cause the then relationship to 
+run only after all of the tasks in the also relationship have completed. 
+
+However, fork relationships create independent tasks that will begin when all
+of the also relationships begin, but will not cause a following then to wait.
 
 In the code below funcD will run only after funcA, funcB, and funcC have 
-completed.
+completed. funcE will begin with funcA, funcB, and funcC, but funcD will not
+wait for the task to complete.
 
-	RFUS->post(Task(funcA).also(funcB).also(funcC).then(funcD));
+	RFUS->post(Task(funcA).also(funcB).also(funcC).fork(funcE).then(funcD));
 
 == Understanding Priority ==
 It is also possible (and suggested for priority queues) to supply a priority 
@@ -103,13 +115,15 @@ The code below will use some function currentTime() to get the current time
 the second task will be prioritized to currentTime()+15. The third task will 
 be prioritized to 1500.
 
+Note: The meaning of the 0 parameter is explained in the next section.
+
 	RFUS->post(Task([] () {
 		printf("I HAPPEN FIRST\n");
-	}, currentTime()).then([] () {
+	}, 0, currentTime()).then([] () {
 		printf("I HAPPEN SECOND\n");
-	}, 15).thenAbsolute([] () {
+	}, 0, 15).thenAbsolute([] () {
 		printf("I HAPPEN THIRD\n");
-	}, 1500);
+	}, 0, 1500);
 
 == Tieing to Workers ==
 Finally it is possible to tie tasks to certain workers. This can be useful to 
@@ -121,13 +135,13 @@ tasks share the same worker. The third task may happen at the same time as
 either of the two workers. This is because it is tied to a totally different 
 worker than the previous two tasks.
 
-	RFUS->post(Task(0, [] () {
+	RFUS->post(Task([] () {
 		printf("I HAPPEN FIRST\n");
-	}).also(0, [] () {
+	}, 1).also([] () {
 		printf("I HAPPEN SECOND\n");
-	}).also(1, [] () {
+	}, 1).also([] () {
 		printf("I HAPPEN AT THE SAME TIME.\n");
-	});
+	}, 2);
 
 == Pipelines ==
 Pipelines are a helper set of templates that add serious power to the tasking
@@ -167,32 +181,78 @@ No resources will be allocated for the bool returned from the final function.
 This value will simply be discarded after it is returned. closeWith returns a
 task_t* the same as close() does for tasks returning void.
 
-It is also possible to fork pipelines. Forking works similarly to the also
-relationship except it must be started and ended which work similarly to then.
+Pipelines can be tricky because there are three types of pipelines:
+    * Normal Pipeline (Takes a parameter)
+    * Void Pipeline (Does not take a parameter)
+    * Forked Pipeline (Takes Parameter, Parameter is shared)
+
+When you are working with pipelines you do not need to specify which type of
+pipeline to create - this is done automatically. You simply need to be aware
+what operations are available to you based on the current pipeline.
+
+The Pipeline::start() function handles the first  transition from a void pipeline 
+to a normal pipeline for you automatically. Thus pipelines always start in the
+normal state. The following table shows the effects of various member functions
+on the state of the pipeline:
+
+Normal Pipeline
+    then w/ return val      -> Normal Pipeline
+    then w/o return val     -> Void Pipeline
+    split w/ return val     -> Forked Pipeline
+    split w/o return val    -> Forked Pipeline
+
+Void Pipeline
+    then w/ return val      -> Normal Pipeline
+    then w/o return val     -> Void Pipeline
+    also w/ return val      -> Normal Pipeline
+    also w/o retrun val     -> Void Pipeline
+    fork w/ return val      -> Void Pipeline
+    fork w/o return val     -> Void Pipeline
+    
+Forked Pipeline
+    also w/ return val      -> Forked Pipeline
+    also w/o return val     -> Forked Pipeline
+    join w/ return val      -> Normal Pipeline
+    join w/o return val     -> Void Pipeline
+    fork w/ return val      -> Forked Pipeline
+    fork w/o return val     -> Forked Pipeline
+
+Void pipelines and Forked pipelines support the fork operation. This operation simply 
+spins off another task that takes the result of the previous operation (if any). 
+No tasks will wait for this task to complete. It is completely indepedent.
+
+Normal and Void pipelines support the then operation. The then operation will complete
+the given task after the last task(s) have completed (exclusing forks). If you
+only use the then operation you will never find yourself in the Forked Pipeline.
+
+If you use the split function in the Normal Pipeline you will find yourself in the
+Forked Pipeline. The return value before the split will be passed into all subsequent 
+calls up to and including the join call that leaves the Forked Pipeline. Thus the split
+is equivalent to a then that can share the return value from before it with subsequent
+calls. All return values in the Forked Pipeline are ignored except for the final "join" 
+call that leaves the Forked Pipeline. The example below illustrates the sematics of 
+the Forked Pipeline.
 
     RFUS->post(Pipeline::start<int>([] () {
         return 42;
-    }).fork<int>([] (int val) { // In: 42, Out: 45.
+    }).split<int>([] (int val) { // In: 42, Out: 45.
         return val+3;
-    }).also([] (int val) {      // In 45
+    }).also<void>([] (int val) { // In 42
         printf("%d\n", val);
-    }).also<int>([] (int val) { // In 45, Out 48 (discarded)
+    }).also<int>([] (int val) {  // In 42, Out 45 (discarded)
         return val+3;
-    }).join<int>([] (int val) { // In 45, Out 49
+    }).join<int>([] (int val) {  // In 42, Out 46
         printf("%d\n", val);
         return val+4;
-    }).then([] (int val) {      // In 49
+    }).then([] (int val) {      // In 46
         printf("%d\n", val);
     }).close()); 
 
-The value of the fork is distributed to all following also calls until the join.
-When inside a fork join replaces then and acts as an also with the added effect
-of ending the fork. While inside the fork all return values are ignored. Only
-the return value of the joining function is kept and passed down the pipeline.
+The above "split", "also", "also" (w/ return), and "join" calls all happen concurrently.
+If the pipeline were a Task class the split would be a then and the rest would be "also" calls. 
 
-Joins allow your pipelines to have secondary effects which do not follow the 
-typical pipeline flow. As usual, the then after the fork, also, also, join will 
-not take place until the fork, alsos, and join are completed.
+Other than taking care to use split and join correctly the usage of the pipeline system should
+be fairly straightforward.
 
 -------------------------------------------------------------------------------
 Dependencies:
