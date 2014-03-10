@@ -21,11 +21,11 @@ library: clean
 	ar rvs lib/librfus.a obj/rfus.o obj/task.o
 	
 	#Copy necessary include files over to include
-	cp rfus.h include/rfus.h
-	cp rfus_type.h include/rfus_type.h
-	cp task.h include/task.h
-	cp pipeline.h include/pipeline.h
-	cp join_semaphore.h include/join_semaphore.h
+	cp rfus.hpp include/rfus.hpp
+	cp rfus_type.hpp include/rfus_type.hpp
+	cp task.hpp include/task.hpp
+	cp pipeline.hpp include/pipeline.hpp
+	cp join_semaphore.hpp include/join_semaphore.hpp
 
 tests:
 	mkdir bin

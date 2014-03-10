@@ -1,7 +1,7 @@
-// This file is part of RFUS (Rcythr's Fast Userspace Scheduling)
+// This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include "rfus.h"
+#include "rfus.hpp"
 #include "pipeline.h"
 
 #include <iostream>
@@ -9,7 +9,7 @@
 #include <mutex>
 #include <condition_variable>
 
-using namespace rcythr;
+using namespace rfus;
 
 int main(int argc, char* argv[])
 {

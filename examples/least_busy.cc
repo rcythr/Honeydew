@@ -1,14 +1,14 @@
-// This file is part of RFUS (Rcythr's Fast Userspace Scheduling)
+// This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include "rfus.h"
+#include "rfus.hpp"
 
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 
-using namespace rcythr;
+using namespace rfus;
 
 // In this test the program will run tasks A-F concurrently assigning them in a RR
 // fashion. Afterwards it will run task G. Task G will signal the condition variable

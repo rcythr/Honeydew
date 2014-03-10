@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "task.h"
-#include "join_semaphore.h"
+#include "task.hpp"
+#include "join_semaphore.hpp"
 
 #include <functional>
 #include <utility>

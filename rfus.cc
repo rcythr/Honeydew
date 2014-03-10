@@ -1,12 +1,12 @@
 // This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include "rfus.h"
+#include "rfus.hpp"
 
-#include "queue.h"
-#include "priority_queue.h"
-#include "counting_wrapper.h"
-#include "join_semaphore.h"
+#include "queue.hpp"
+#include "priority_queue.hpp"
+#include "counting_wrapper.hpp"
+#include "join_semaphore.hpp"
 
 #include <thread>
 #include <vector>

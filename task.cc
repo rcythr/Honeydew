@@ -1,8 +1,8 @@
 // This file is part of RFUS (Rich's Fast Userspace Scheduling)
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include "task.h"
-#include "join_semaphore.h"
+#include "task.hpp"
+#include "join_semaphore.hpp"
 
 using namespace rfus;
 
