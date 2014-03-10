@@ -136,6 +136,15 @@ Dependencies:
 	Older versions than the above *may* work depending on compliance.
 
 -------------------------------------------------------------------------------
+Installation Instructions
+
+On linux or mingw simply type "make". The static library will be in the /lib 
+directory and all the necessary includes will be in /include.
+
+On other systems simply use your compiler to build the .cc files into a static
+library. From there use the rfus.h, rfus_type.h, and task.h files as includes.
+
+-------------------------------------------------------------------------------
 Documentation
 	Documentation may be found in the associated .hpp files and in code.
 

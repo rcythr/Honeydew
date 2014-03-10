@@ -12,9 +12,7 @@
 #include <vector>
 
 // Global State Management
-#if ENABLE_SINGLETON
-    RFUSInterface* RFUS;
-#endif
+RFUSInterface* RFUS;
 
 typedef CountingWrapper<Queue<task_t>> CountingQueue;
 typedef CountingWrapper<PriorityQueue<task_t>> PriorityCountingQueue;
