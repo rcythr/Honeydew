@@ -6,8 +6,6 @@
 #include "task.h"
 #include "rfus_type.h"
 
-#define ENABLE_SINGLETON 1
-
 /**
 * Interface for Rcythr's Fast Userspace Scheduling.
 *   Implements functions which allow posting of task_t* objects for scheduling.
@@ -38,9 +36,7 @@ struct RFUSInterface
 */
 RFUSInterface* createRFUS(RFUSType type, size_t num_threads, size_t step_size);
 
-#if ENABLE_SINGLETON
-    /**
-    * Global pointer for use as a singleton if desired.
-    */
-    extern RFUSInterface* RFUS;
-#endif
+/**
+* Global pointer for use as a singleton if desired.
+*/
+extern RFUSInterface* RFUS;
