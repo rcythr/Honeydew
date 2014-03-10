@@ -5,6 +5,9 @@
 
 #include <atomic>
 
+namespace rcythr
+{
+
 /**
 * A simple wrapper for queues that adds .size() functionality.
 *  It should be noted that the size functionality is not strictly thread safe
@@ -65,3 +68,5 @@ private:
     QueueType q;
     std::atomic<size_t> n;
 };
+
+}

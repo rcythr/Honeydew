@@ -9,6 +9,8 @@
 #include <mutex>
 #include <condition_variable>
 
+using namespace rcythr;
+
 int main(int argc, char* argv[])
 {
     RFUS = createRFUS(ROUND_ROBIN, 2, 1);
@@ -18,7 +20,11 @@ int main(int argc, char* argv[])
 
     std::unique_lock<std::mutex> lg(return_mut);
 
-    RFUS.post(Pipeline::start([] () -> int { return 5; }).then([] (int val) { printf("%d\n", val); }).close());
+    RFUS->post(
+                Pipeline::start<int>([] () { return 5; })
+                .then<char>([] (int val) { printf("%d\n", val); return 'a'; })
+                .closeWith<bool>([] (char val) { printf("%c\n", val); return true; })
+              );
 
     cv.wait(lg);
 

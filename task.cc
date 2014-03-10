@@ -4,6 +4,8 @@
 #include "task.h"
 #include "join_semaphore.h"
 
+using namespace rcythr;
+
 task_t::task_t(std::function<void()> action, size_t worker, uint64_t deadline)
     : action(action)
     , priority(deadline)
@@ -12,6 +14,16 @@ task_t::task_t(std::function<void()> action, size_t worker, uint64_t deadline)
     , worker(worker)
     , next(nullptr)
 {
+}
+
+Task::Task(Task&& other)
+    : root(other.root)
+    , or_root(other.or_root)
+    , leaf(other.leaf)
+{
+    other.root = nullptr;
+    other.or_root = nullptr;
+    other.leaf = nullptr;
 }
 
 Task::~Task()

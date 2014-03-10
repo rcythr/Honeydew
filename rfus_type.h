@@ -3,6 +3,9 @@
 
 #pragma once
 
+namespace rcythr
+{
+
 /**
 * Defines how the implementation of the RFUS behaves when a task is not
 *  associated with a resource.
@@ -56,3 +59,5 @@ enum RFUSType
     LEAST_BUSY_WITH_PRIORITY,
 
 };
+
+}

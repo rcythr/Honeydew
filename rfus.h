@@ -6,6 +6,8 @@
 #include "task.h"
 #include "rfus_type.h"
 
+namespace rcythr {
+
 /**
 * Interface for Rcythr's Fast Userspace Scheduling.
 *   Implements functions which allow posting of task_t* objects for scheduling.
@@ -40,3 +42,5 @@ RFUSInterface* createRFUS(RFUSType type, size_t num_threads, size_t step_size);
 * Global pointer for use as a singleton if desired.
 */
 extern RFUSInterface* RFUS;
+
+}

@@ -5,6 +5,9 @@
 
 #include <atomic>
 
+namespace rcythr
+{
+
 /**
 * Simple wrapper for an atomic integer that serves as the semaphore
 *  in concurrently running tasks that then must be joined.
@@ -42,3 +45,5 @@ public:
 private:
     std::atomic<unsigned int> n;
 };
+
+}

@@ -3,12 +3,11 @@
 
 #pragma once
 
-#include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <cassert>
-#include <fstream>
-#include <sstream>
+
+namespace rcythr
+{
 
 /**
 * A simple Lock based queue which can hold T elements.
@@ -95,3 +94,5 @@ private:
     T* first;
     T* last;
 };
+
+}

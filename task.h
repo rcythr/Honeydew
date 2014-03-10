@@ -7,6 +7,9 @@
 #include <cstdint>
 #include <vector>
 
+namespace rcythr
+{
+
 /// Forward Declarations
 struct join_semaphore_t;
 
@@ -37,6 +40,9 @@ struct task_t
 class Task
 {
 public:
+
+    Task(Task&& other);
+    Task(const Task& other) = delete;
 
     /**
     * Constructs a new task object with a priority-less action.
@@ -174,3 +180,5 @@ public:
 private:
     task_t *root, *or_root, *leaf;
 };
+
+}

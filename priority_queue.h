@@ -6,6 +6,9 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace rcythr
+{
+
 /**
 * A locking priority queue that will store elements in increasing order
 *  according to their ->priority. Lower priority value is highest priority.
@@ -98,3 +101,5 @@ private:
     std::condition_variable cd;
     T* first;
 };
+
+}

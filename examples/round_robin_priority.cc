@@ -9,6 +9,8 @@
 #include <chrono>
 #include <condition_variable>
 
+using namespace rcythr;
+
 // In this test the program will run tasks A-F concurrently assigning them in a RR
 // fashion. Afterwards it will run task G. Task G will signal the condition variable
 // on the main thread which will then exit, ending the program.

@@ -11,8 +11,10 @@
 #include <thread>
 #include <vector>
 
+using namespace rcythr;
+
 // Global State Management
-RFUSInterface* RFUS;
+RFUSInterface* rcythr::RFUS;
 
 typedef CountingWrapper<Queue<task_t>> CountingQueue;
 typedef CountingWrapper<PriorityQueue<task_t>> PriorityCountingQueue;
@@ -122,7 +124,7 @@ struct RFUSImpl : public RFUSInterface
 *                       if the number of resources > num_threads some resources will share a thread.
 * @param step_size the maximum number of events each worker removes from the queue at a time. 0 is infinite.
 */
-RFUSInterface* createRFUS(RFUSType type, size_t num_threads, size_t step_size)
+RFUSInterface* rcythr::createRFUS(RFUSType type, size_t num_threads, size_t step_size)
 {
     switch(type)
     {
