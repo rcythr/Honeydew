@@ -5,4 +5,6 @@
 *.layout
 *.cbp
 obj/
+lib/
+include/
 bin/
