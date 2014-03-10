@@ -226,24 +226,24 @@
 </ul><h3>
 <a name="void-pipeline" class="anchor" href="#void-pipeline"><span class="octicon octicon-link"></span></a>Void Pipeline</h3>
 
-<p>*** then w/ return val      -&gt; Normal Pipeline
-*** then w/o return val     -&gt; Void Pipeline
-*** also w/ return val      -&gt; Normal Pipeline
-*** also w/o retrun val     -&gt; Void Pipeline
-*** fork w/ return val      -&gt; Void Pipeline
-*** fork w/o return val     -&gt; Void Pipeline</p>
-
-<h3>
+<ul>
+<li>then w/ return val      -&gt; Normal Pipeline</li>
+<li>then w/o return val     -&gt; Void Pipeline</li>
+<li>also w/ return val      -&gt; Normal Pipeline</li>
+<li>also w/o retrun val     -&gt; Void Pipeline</li>
+<li>fork w/ return val      -&gt; Void Pipeline</li>
+<li>fork w/o return val     -&gt; Void Pipeline</li>
+</ul><h3>
 <a name="forked-pipeline" class="anchor" href="#forked-pipeline"><span class="octicon octicon-link"></span></a>Forked Pipeline</h3>
 
-<p>*** also w/ return val      -&gt; Forked Pipeline
-*** also w/o return val     -&gt; Forked Pipeline
-*** join w/ return val      -&gt; Normal Pipeline
-*** join w/o return val     -&gt; Void Pipeline
-*** fork w/ return val      -&gt; Forked Pipeline
-*** fork w/o return val     -&gt; Forked Pipeline</p>
-
-<p>Void pipelines and Forked pipelines support the fork operation. This operation simply spins off another task that takes the result of the previous operation (if any). No tasks will wait for this task to complete. It is completely indepedent.</p>
+<ul>
+<li>also w/ return val      -&gt; Forked Pipeline</li>
+<li>also w/o return val     -&gt; Forked Pipeline</li>
+<li>join w/ return val      -&gt; Normal Pipeline</li>
+<li>join w/o return val     -&gt; Void Pipeline</li>
+<li>fork w/ return val      -&gt; Forked Pipeline</li>
+<li>fork w/o return val     -&gt; Forked Pipeline</li>
+</ul><p>Void pipelines and Forked pipelines support the fork operation. This operation simply spins off another task that takes the result of the previous operation (if any). No tasks will wait for this task to complete. It is completely indepedent.</p>
 
 <p>Normal and Void pipelines support the then operation. The then operation will complete the given task after the last task(s) have completed (exclusing forks). If you only use the then operation you will never find yourself in the Forked Pipeline.</p>
 
