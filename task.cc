@@ -54,6 +54,7 @@ Task::~Task()
 }
 
 Task::Task(std::function<void()> action, size_t worker, uint64_t deadline)
+    : or_root(nullptr)
 {
     root = leaf = new task_t(action, worker, deadline);
 }
@@ -121,6 +122,7 @@ Task& Task::fork(std::function<void()> action, size_t worker, uint64_t deadline)
     task_t* task = new task_t(action, worker, deadline);
     task->next = leaf->next;
     leaf->next = task;
+    return *this;
 }
 
 Task& Task::forkAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
@@ -128,6 +130,7 @@ Task& Task::forkAbsolute(std::function<void()> action, size_t worker, uint64_t d
     task_t* task = new task_t(action, worker, leaf->priority + deadline);
     task->next = leaf->next;
     leaf->next = task;
+    return *this;
 }
 
 task_t* Task::getTask()
