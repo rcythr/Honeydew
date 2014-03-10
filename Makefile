@@ -14,8 +14,8 @@ library: clean
 	mkdir include
 	
 	# Compile everything into obj
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -c rfus.cc -o obj/rfus.o
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -c task.cc -o obj/task.o
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -c rfus.cc -o obj/rfus.o
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -c task.cc -o obj/task.o
 	
 	#Construct the archive.
 	ar rvs lib/librfus.a obj/rfus.o obj/task.o
@@ -29,9 +29,9 @@ library: clean
 
 tests:
 	mkdir bin
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin examples/round_robin.cc -Iinclude -Llib -lrfus
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin_priority examples/round_robin_priority.cc -Iinclude -Llib -lrfus
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy examples/least_busy.cc -Iinclude -Llib -lrfus
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy_priority examples/least_busy_priority.cc -Iinclude -Llib -lrfus
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/pipeline_test examples/pipeline_test.cc -Iinclude -Llib -lrfus
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin examples/round_robin.cc -Iinclude -Llib -lrfus
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin_priority examples/round_robin_priority.cc -Iinclude -Llib -lrfus
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy examples/least_busy.cc -Iinclude -Llib -lrfus
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy_priority examples/least_busy_priority.cc -Iinclude -Llib -lrfus
+	g++ -ggdb -std=c++11 -Wl,--no-as-needed -pthread -o bin/pipeline_test examples/pipeline_test.cc -Iinclude -Llib -lrfus
 

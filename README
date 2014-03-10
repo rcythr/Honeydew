@@ -167,6 +167,33 @@ No resources will be allocated for the bool returned from the final function.
 This value will simply be discarded after it is returned. closeWith returns a
 task_t* the same as close() does for tasks returning void.
 
+It is also possible to fork pipelines. Forking works similarly to the also
+relationship except it must be started and ended which work similarly to then.
+
+    RFUS->post(Pipeline::start<int>([] () {
+        return 42;
+    }).fork<int>([] (int val) { // In: 42, Out: 45.
+        return val+3;
+    }).also([] (int val) {      // In 45
+        printf("%d\n", val);
+    }).also<int>([] (int val) { // In 45, Out 48 (discarded)
+        return val+3;
+    }).join<int>([] (int val) { // In 45, Out 49
+        printf("%d\n", val);
+        return val+4;
+    }).then([] (int val) {      // In 49
+        printf("%d\n", val);
+    }).close()); 
+
+The value of the fork is distributed to all following also calls until the join.
+When inside a fork join replaces then and acts as an also with the added effect
+of ending the fork. While inside the fork all return values are ignored. Only
+the return value of the joining function is kept and passed down the pipeline.
+
+Joins allow your pipelines to have secondary effects which do not follow the 
+typical pipeline flow. As usual, the then after the fork, also, also, join will 
+not take place until the fork, alsos, and join are completed.
+
 -------------------------------------------------------------------------------
 Dependencies:
 

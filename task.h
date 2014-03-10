@@ -46,18 +46,11 @@ public:
 
     /**
     * Constructs a new task object with a given deadline.
-    * @arg function to schedule and call on any thread
-    * @arg deadline the absolute deadline (priority) of this call.
-    */
-    Task(std::function<void()> action, uint64_t deadline=0);
-
-    /**
-    * Constructs a new task object with a given deadline.
-    * @arg worker the associated thread on which to run this action.
     * @arg function to schedule and call on the associated worker thread.
+    * @arg worker the associated thread on which to run this action. Worker=0 means any worker.
     * @arg deadline the absolute deadline (priority) of this call.
     */
-    Task(size_t worker, std::function<void()> action, uint64_t deadline=0);
+    Task(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Cleans up the internals of this object if necessary.
@@ -66,69 +59,57 @@ public:
 
     /**
     * Schedules a task with the given priority to be run after the previous task(s)
+    *   on the given worker thread
     * @arg action the task to be performed.
+    * @arg worker the associated worker for this task to run on. Worker=0 means any worker.
     * @arg deadline the priority of the task (added to the previous task's deadline).
     */
-    Task& then(std::function<void()> action, uint64_t deadline=0);
-
-    /**
-    * Schedules a task with the given priority to be run after the previous task(s)
-    * @arg action the task to be performed.
-    * @arg deadline the priority of the task (absolute, not added to previous task's deadline).
-    */
-    Task& thenAbsolute(std::function<void()> action, uint64_t deadline);
+    Task& then(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Schedules a task with the given priority to be run after the previous task(s)
     *   on the given worker thread
-    * @arg worker the associated worker for this task to run on.
     * @arg action the task to be performed.
-    * @arg deadline the priority of the task (added to the previous task's deadline).
-    */
-    Task& then(size_t worker, std::function<void()> action, uint64_t deadline=0);
-
-    /**
-    * Schedules a task with the given priority to be run after the previous task(s)
-    *   on the given worker thread
-    * @arg worker the associated worker for this task to run on.
-    * @arg action the task to be performed.
+    * @arg worker the associated worker for this task to run on. Worker=0 means any worker.
     * @arg deadline the priority of the task (absolute, not added to previous task's deadline).
     */
-    Task& thenAbsolute(size_t worker, std::function<void()> action, uint64_t deadline);
+    Task& thenAbsolute(std::function<void()> action, size_t worker=0,  uint64_t deadline=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
-    *  on any thread.
+    *  on the associated worker thread. Further tasks will wait for this task to complete.
     * @arg action the task to perform.
+    * @arg worker the associated worker thread. Worker=0 means any worker.
     * @arg deadline the priority of the task. (added to the previous task's deadline).
     */
-    Task& also(std::function<void()> action, uint64_t deadline=0);
+    Task& also(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
-    *  on any thread.
+    *  on the associated worker thread. Further tasks will wait for this task to complete.
     * @arg action the task to perform.
+    * @arg worker the associated worker thread. Worker=0 means any worker.
     * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
     */
-    Task& alsoAbsolute(std::function<void()> action, uint64_t deadline);
+    Task& alsoAbsolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
-    *  on the associated worker thread.
-    * @arg worker the associated worker thread.
+    *  on the associated worker thread. Further tasks will not wait for this task to complete.
     * @arg action the task to perform.
+    * @arg worker the associated worker thread. Worker=0 means any worker.
     * @arg deadline the priority of the task. (added to the previous task's deadline).
     */
-    Task& also(size_t worker, std::function<void()> action, uint64_t deadline=0);
+    Task& fork(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
-    *  on the associated worker thread.
-    * @arg worker the associated worker thread.
+    *  on the associated worker thread. Further tasks will not wait for this task to complete.
     * @arg action the task to perform.
+    * @arg worker the associated worker thread. Worker=0 means any worker.
     * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
     */
-    Task& alsoAbsolute(size_t worker, std::function<void()> action, uint64_t deadline);
+    Task& forkAbsolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Returns the associated task_t* of this object and then !empties this object!

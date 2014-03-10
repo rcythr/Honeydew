@@ -53,39 +53,12 @@ Task::~Task()
         delete prev_join;
 }
 
-Task::Task(std::function<void()> action, uint64_t deadline)
-{
-    root = leaf = new task_t(action, 0, deadline);
-}
-
-Task::Task(size_t worker, std::function<void()> action, uint64_t deadline)
+Task::Task(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     root = leaf = new task_t(action, worker, deadline);
 }
 
-Task& Task::then(std::function<void()> action, uint64_t deadline)
-{
-    leaf = leaf->continuation = new task_t(action, 0, leaf->priority + deadline);
-    while(or_root != nullptr)
-    {
-        or_root->continuation = leaf;
-        or_root = or_root->next;
-    }
-    return *this;
-}
-
-Task& Task::thenAbsolute(std::function<void()> action, uint64_t deadline)
-{
-    leaf = leaf->continuation = new task_t(action, 0, deadline);
-    while(or_root != nullptr)
-    {
-        or_root->continuation = leaf;
-        or_root = or_root->next;
-    }
-    return *this;
-}
-
-Task& Task::then(size_t worker, std::function<void()> action, uint64_t deadline)
+Task& Task::then(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     leaf = leaf->continuation = new task_t(action, worker, leaf->priority + deadline);
     while(or_root != nullptr)
@@ -96,7 +69,7 @@ Task& Task::then(size_t worker, std::function<void()> action, uint64_t deadline)
     return *this;
 }
 
-Task& Task::thenAbsolute(size_t worker, std::function<void()> action, uint64_t deadline)
+Task& Task::thenAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     leaf = leaf->continuation = new task_t(action, worker, deadline);
     while(or_root != nullptr)
@@ -107,43 +80,7 @@ Task& Task::thenAbsolute(size_t worker, std::function<void()> action, uint64_t d
     return *this;
 }
 
-Task& Task::also(std::function<void()> action, uint64_t deadline)
-{
-    join_semaphore_t* join;
-    if(leaf->join == nullptr)
-    {
-        or_root = leaf;
-        join = leaf->join = new join_semaphore_t(2);
-    }
-    else
-    {
-        join = leaf->join;
-        join->increment();
-    }
-    leaf = leaf->next = new task_t(action, 0, leaf->priority + deadline);
-    leaf->join = join;
-    return *this;
-}
-
-Task& Task::alsoAbsolute(std::function<void()> action, uint64_t deadline)
-{
-    join_semaphore_t* join;
-    if(leaf->join == nullptr)
-    {
-        or_root = leaf;
-        join = leaf->join = new join_semaphore_t(2);
-    }
-    else
-    {
-        join = leaf->join;
-        join->increment();
-    }
-    leaf = leaf->next = new task_t(action, 0, deadline);
-    leaf->join = join;
-    return *this;
-}
-
-Task& Task::also(size_t worker, std::function<void()> action, uint64_t deadline)
+Task& Task::also(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     join_semaphore_t* join;
     if(leaf->join == nullptr)
@@ -161,7 +98,7 @@ Task& Task::also(size_t worker, std::function<void()> action, uint64_t deadline)
     return *this;
 }
 
-Task& Task::alsoAbsolute(size_t worker, std::function<void()> action, uint64_t deadline)
+Task& Task::alsoAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     join_semaphore_t* join;
     if(leaf->join == nullptr)
@@ -177,6 +114,20 @@ Task& Task::alsoAbsolute(size_t worker, std::function<void()> action, uint64_t d
     leaf = leaf->next = new task_t(action, worker, deadline);
     leaf->join = join;
     return *this;
+}
+
+Task& Task::fork(std::function<void()> action, size_t worker, uint64_t deadline)
+{
+    task_t* task = new task_t(action, worker, deadline);
+    task->next = leaf->next;
+    leaf->next = task;
+}
+
+Task& Task::forkAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
+{
+    task_t* task = new task_t(action, worker, leaf->priority + deadline);
+    task->next = leaf->next;
+    leaf->next = task;
 }
 
 task_t* Task::getTask()
