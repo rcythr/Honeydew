@@ -1,53 +1,48 @@
-<!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="RFUS : Rich&#39;s Fast Userspace Scheduling." />
 
-  <title>RFUS</title>
-  <meta name="description" content="Rich&#39;s Fast Userspace Scheduling.">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RFUS</title>
+  </head>
 
-</head>
+  <body>
 
-<body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/rcythr/RFUS">View on GitHub</a>
 
-  <div class="wrapper">
-    <header>
-      <h1 class="title">RFUS</h1>
-    </header>
-    <div id="container">
-      <p class="tagline">Rich&#39;s Fast Userspace Scheduling.</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/rcythr/RFUS/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/rcythr/RFUS/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/rcythr/RFUS" class="code">View RFUS on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <h1>
+          <h1 id="project_title">RFUS</h1>
+          <h2 id="project_tagline">Rich&#39;s Fast Userspace Scheduling.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/rcythr/RFUS/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rcythr/RFUS/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
 <a name="general" class="anchor" href="#general"><span class="octicon octicon-link"></span></a>General</h1>
 
-<p><strong>Version:</strong> <strong>1.0.2</strong></p>
+<p><strong>Version:</strong> 1.0.2</p>
 
-<p><strong>Release date:</strong> <strong>2014.03.10</strong></p>
+<p><strong>Release date:</strong> 2014.03.10</p>
 
-<p><strong>Project state:</strong> <strong>stable</strong></p>
+<p><strong>Project state:</strong> stable</p>
 
 <p><strong>Author:</strong> Richard W. Laughlin Jr. (<a href="https://github.com/rcythr" class="user-mention">@rcythr</a>)</p>
 
-<hr><p>This library allows a user to schedule tasks to be run on a collection of worker threads in a concurrent fashion. First a RFUS implementation must be created and stored in a pointer somewhere. The default is a singleton located in the rfus library.</p>
+<hr><p>This library allows a user to schedule tasks to be run on a collection of worker threads in a concurrent fashion. First a <strong>RFUS</strong> implementation must be created and stored in a pointer somewhere. The default is a singleton located in the rfus library.</p>
 
 <p>In general, Worker-agnostic tasks can be scheduled on:</p>
 
@@ -56,39 +51,45 @@
 <li>The order in which the worker completes his tasks. (<strong>Task Priority</strong>)</li>
 </ol><p>However, Tasks which are tied to a particular worker thread can only be scheduled within the worker (<strong>Task Priority</strong>)</p>
 
-<hr><p>Currently there are four RFUS implementations:</p>
+<hr><p>Currently there are four <strong>RFUS</strong> implementations:</p>
 
 <ul>
 <li>
 <strong>ROUND_ROBIN</strong>
 
 <ul>
-<li>Worker selection is ROUND_ROBIN</li>
-<li>Tasks are strictly FIFO</li>
+<li>Worker selection is <strong>round robin</strong>
+</li>
+<li>Tasks are strictly <strong>FIFO</strong>
+</li>
 </ul>
 </li>
 <li>
 <strong>ROUND_ROBIN_WITH_PRIORITY</strong>
 
 <ul>
-<li>Worker selection is ROUND_ROBIN</li>
-<li>Tasks are reordered to priority</li>
+<li>Worker selection is <strong>round robin</strong>
+</li>
+<li>Tasks are reordered to <strong>priority</strong>
+</li>
 </ul>
 </li>
 <li>
 <strong>LEAST_BUSY</strong>
 
 <ul>
-<li>Worker selection is onto the least busy worker</li>
-<li>Tasks are strictly FIFO</li>
+<li>Worker selection is onto the <strong>least busy</strong> worker</li>
+<li>Tasks are strictly <strong>FIFO</strong>
+</li>
 </ul>
 </li>
 <li>
 <strong>LEAST_BUSY_WITH_PRIORITY</strong>
 
 <ul>
-<li>Worker selection is onto the least busy worker</li>
-<li>Tasks are reordered to priority</li>
+<li>Worker selection is onto the <strong>least busy</strong> worker</li>
+<li>Tasks are reordered to <strong>priority</strong>
+</li>
 </ul>
 </li>
 </ul><p>Each has benefits and drawbacks which are discussed in the <strong>rfus_type.hpp</strong> file. The choice of implementation depends largely on the type of tasks you're processing and the rate at which they come in.</p>
@@ -96,12 +97,12 @@
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
-<p>The code below creates a RFUS and stores it into the global RFUS variable.  The RFUS will schedule worker-agnostic threads in a round robin fashion to the 2 available workers. The workers will grab tasks from the queues 1 at a time.</p>
+<p>The code below creates a <strong>RFUS</strong> and stores it into the global <strong>RFUS</strong> variable.  The <strong>RFUS</strong> will schedule worker-agnostic threads in a <strong>round robin</strong> fashion to the <strong>2</strong> available workers. The workers will grab tasks from the queues <strong>1</strong> at a time.</p>
 
 <pre><code>    RFUS = createRFUS(ROUND_ROBIN, 2, 1);
 </code></pre>
 
-<p>The code below creates a RFUS and stores it into a custom variable. The RFUS will schedule worker-agnostic threads into the least busy queue at that time for the 5 available workers. The workers will grab tasks from the queues 2 at a time. Additionally the tasks will be ordered in their queues based on their priority (lowest is highest).</p>
+<p>The code below creates a <strong>RFUS</strong> and stores it into a custom variable. The <strong>RFUS</strong> will schedule worker-agnostic threads into the <strong>least busy</strong> queue at that time for the <strong>5</strong> available workers. The workers will grab tasks from the queues <strong>2</strong> at a time. Additionally the tasks will be ordered in their queues based on their <strong>priority</strong> (lowest is highest).</p>
 
 <pre><code>    RFUSInterface* myRFUS = createRFUS(LEAST_BUSY_WITH_PRIORITY, 5, 2);
 </code></pre>
@@ -109,7 +110,7 @@
 <h2>
 <a name="function-specification" class="anchor" href="#function-specification"><span class="octicon octicon-link"></span></a>Function Specification</h2>
 
-<p>Once a RFUS has been created it is possible to schedule tasks onto it using the Task helper class. This class has a lot of functions which do similar, but different things. The order in which the arguments are supplied is helpful to understand the semantics.</p>
+<p>Once a <strong>RFUS</strong> has been created it is possible to schedule tasks onto it using the <strong>Task</strong> helper class. This class has a lot of functions which do similar, but different things. The order in which the arguments are supplied is helpful to understand the semantics.</p>
 
 <ul>
 <li>Functor to Task [Required]</li>
@@ -118,7 +119,7 @@
 </ul><h2>
 <a name="then-relationships" class="anchor" href="#then-relationships"><span class="octicon octicon-link"></span></a>Then Relationships</h2>
 
-<p>Below two tasks are created which will happen, in order, possibly on different threads. The use of colors in these diagrams designates different "rows" of tasks. Same color executes concurrently, different executes sequentially.</p>
+<p>Below two tasks (<strong>funcA</strong> and <strong>funcB</strong>) are created which will happen, in order, possibly on different threads. The use of colors in these diagrams designates different "rows" of tasks. Same color executes concurrently, different executes sequentially.</p>
 
 <p align="center">
 <img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/then.png" alt="Then Relationship Diagram"></p>
@@ -129,7 +130,7 @@
 <h2>
 <a name="also-relationships" class="anchor" href="#also-relationships"><span class="octicon octicon-link"></span></a>Also Relationships</h2>
 
-<p>Below two tasks (funcA and funcB) are created which may happen concurrently on two different threads. All following tasks will wait for the also to complete. Afterwards the following task (funcC) will be completed.</p>
+<p>Below two tasks (<strong>funcA</strong> and <strong>funcB</strong>) are created which may happen concurrently on two different threads. All following tasks will wait for the also to complete. Afterwards the following task (<strong>funcC</strong>) will be completed.</p>
 
 <p align="center">
 <img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/also.png" alt="Also Relationship Diagram"></p>
@@ -211,9 +212,12 @@
 <p>Pipelines can be tricky because there are three types of pipelines:</p>
 
 <ul>
-<li>Normal Pipeline (Takes a parameter)</li>
-<li>Void Pipeline (Does not take a parameter)</li>
-<li>Forked Pipeline (Takes Parameter, Parameter is shared)</li>
+<li>
+<strong>Normal Pipeline</strong> (Takes a parameter)</li>
+<li>
+<strong>Void Pipeline</strong> (Does not take a parameter)</li>
+<li>
+<strong>Forked Pipeline</strong> (Takes Parameter, Parameter is shared)</li>
 </ul><p>When you are working with pipelines you do not need to specify which type of pipeline to create - this is done automatically. You simply need to be aware what operations are available to you based on the current pipeline.</p>
 
 <p>The <strong>Pipeline::start()</strong> function handles the first transition from a <strong>Void Pipeline</strong> to a <strong>Normal Pipeline</strong> for you automatically. Thus pipelines always start in the <strong>Normal Pipeline</strong>. The following image/table shows the effects of various member functions on the state of the pipeline:</p>
@@ -305,26 +309,18 @@
 <li>
 <strong>1.0.0</strong> - Basic implementation is complete with continuations and joins.</li>
 </ul>
-        </article>
-      </div>
+      </section>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/rcythr" class="avatar"><img src="https://2.gravatar.com/avatar/05c2f9229c89e1f79d8c6c5b5208cb43?d=https%3A%2F%2Fidenticons.github.com%2F505b270583621595ae816c54ba940d22.png&amp;r=x&amp;s=60" width="48" height="48"/></a> <a href="https://github.com/rcythr">rcythr</a> maintains <a href="https://github.com/rcythr/RFUS">RFUS</a></p>
 
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">RFUS maintained by <a href="https://github.com/rcythr">rcythr</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
 
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br/>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/rcythr/RFUS/tarball/master" class="tar">tar</a><a href="https://github.com/rcythr/RFUS/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
+    
 
-  
-</body>
+  </body>
 </html>
