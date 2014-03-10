@@ -1,10 +1,11 @@
 
-all: library
+all: library tests
 
 clean:
 	rm -rf obj/
 	rm -rf lib/
 	rm -rf include/
+	rm -rf bin/
 
 library: clean
 	# Create the obj folder and output directories.
@@ -13,8 +14,8 @@ library: clean
 	mkdir include
 	
 	# Compile everything into obj
-	g++ -std=c++11 -c rfus.cc -o obj/rfus.o
-	g++ -std=c++11 -c task.cc -o obj/task.o
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -c rfus.cc -o obj/rfus.o
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -c task.cc -o obj/task.o
 	
 	#Construct the archive.
 	ar rvs lib/librfus.a obj/rfus.o obj/task.o
@@ -25,4 +26,5 @@ library: clean
 	cp task.h include/task.h
 
 tests:
-	g++ -std=c++11 -o simple_test examples/simple_test.cc -I. -L. -lrfus
+	mkdir bin
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/simple_test examples/simple_test.cc -Iinclude -Llib -lrfus

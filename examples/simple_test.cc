@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     std::mutex return_mut;
     std::condition_variable cv;
 
-    std::lock_guard<std::mutex> lg(return_mut);
+    std::unique_lock<std::mutex> lg(return_mut);
 
     RFUS->post(Task([] () {
         std::cout << std::this_thread::get_id() << " A" << std::endl;
@@ -37,6 +37,6 @@ int main(int argc, char* argv[])
         cv.notify_all();
     }));
 
-    cv.wait(return_mut);
+    cv.wait(lg);
 
 }
