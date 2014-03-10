@@ -129,6 +129,44 @@ worker than the previous two tasks.
 		printf("I HAPPEN AT THE SAME TIME.\n");
 	});
 
+== Pipelines ==
+Pipelines are a helper set of templates that add serious power to the tasking
+system described above. The pipeline class does nothing that a user could not
+already do, but simply wraps it in a clean, no-nonsense interface.
+
+The following is the typical usage of a pipeline:
+
+    RFUS->post(Pipeline::start<int>([] () {
+        return 42;
+    }).then([] (int value) {
+        printf("%d\n", value);
+    }).close());
+
+In the above code the first task is scheduled and returns a value of 42. This
+value is stored on the heap and then passed into the second task. The second
+task does not return a value and thus can be closed. The close() function
+returns a task_t* similar to the Task helper class. In fact, the Pipeline
+template uses the Task class internally.
+
+Pipelines support the same [worker], action, [deadline] function arguments as the
+Task class. 
+
+Ideally pipelines will always end with a function that returns void. However,
+in many cases this is not possible, so instead of adding a dummy function at the
+end of the pipeline, resources can be saved by using endWith instead of then.
+For example:
+
+    RFUS->post(Pipeline::start<int>([] () {
+        return 42;
+    }).closeWith<bool>([] (int value) {
+        printf("%d\n", value);
+        return true;
+    }));
+
+No resources will be allocated for the bool returned from the final function.
+This value will simply be discarded after it is returned. closeWith returns a
+task_t* the same as close() does for tasks returning void.
+
 -------------------------------------------------------------------------------
 Dependencies:
 
