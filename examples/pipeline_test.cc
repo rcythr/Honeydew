@@ -20,11 +20,16 @@ int main(int argc, char* argv[])
 
     std::unique_lock<std::mutex> lg(return_mut);
 
-    RFUS->post(
-                Pipeline::start<int>([] () { return 5; })
-                .then<char>([] (int val) { printf("%d\n", val); return 'a'; })
-                .closeWith<bool>([] (char val) { printf("%c\n", val); return true; })
-              );
+    RFUS->post(Pipeline::start<int>([] () { 
+                    return 5; 
+                }).then<char>([] (int val) { 
+                    printf("%d\n", val); 
+                    return 'a'; 
+                }).closeWith<bool>([&] (char val) { 
+                    printf("%c\n", val); 
+                    cv.notify_all(); 
+                    return true; 
+                }));
 
     cv.wait(lg);
 
