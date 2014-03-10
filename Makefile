@@ -27,4 +27,8 @@ library: clean
 
 tests:
 	mkdir bin
-	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/simple_test examples/simple_test.cc -Iinclude -Llib -lrfus
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin examples/round_robin.cc -Iinclude -Llib -lrfus
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin_priority examples/round_robin_priority.cc -Iinclude -Llib -lrfus
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy examples/least_busy.cc -Iinclude -Llib -lrfus
+	g++ -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy_priority examples/least_busy_priority.cc -Iinclude -Llib -lrfus
+
