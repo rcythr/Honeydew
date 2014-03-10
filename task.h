@@ -68,24 +68,102 @@ public:
     */
     ~Task();
 
+    /**
+    * Schedules a task to run after the previous task(s).
+    * @arg action the task to be performed.
+    */
     Task& then(std::function<void()> action);
+
+    /**
+    * Schedules a task with the given priority to be run after the previous task(s)
+    * @arg action the task to be performed.
+    * @arg deadline the priority of the task (added to the previous task's deadline).
+    */
     Task& then(std::function<void()> action, uint64_t deadline);
+
+    /**
+    * Schedules a task with the given priority to be run after the previous task(s)
+    * @arg action the task to be performed.
+    * @arg deadline the priority of the task (absolute, not added to previous task's deadline).
+    */
     Task& thenAbsolute(std::function<void()> action, uint64_t deadline);
 
+    /**
+    * Schedules a task to run after the previous task(s) on the given worker thread.
+    * @arg worker the associated worker for this task to run on.
+    * @arg action the task to be performed.
+    */
     Task& then(size_t worker, std::function<void()> action);
+
+    /**
+    * Schedules a task with the given priority to be run after the previous task(s)
+    *   on the given worker thread
+    * @arg worker the associated worker for this task to run on.
+    * @arg action the task to be performed.
+    * @arg deadline the priority of the task (added to the previous task's deadline).
+    */
     Task& then(size_t worker, std::function<void()> action, uint64_t deadline);
+
+    /**
+    * Schedules a task with the given priority to be run after the previous task(s)
+    *   on the given worker thread
+    * @arg worker the associated worker for this task to run on.
+    * @arg action the task to be performed.
+    * @arg deadline the priority of the task (absolute, not added to previous task's deadline).
+    */
     Task& thenAbsolute(size_t worker, std::function<void()> action, uint64_t deadline);
 
+    /**
+    * Schedules a task to occur concurrently with the previous task on any thread.
+    * @arg the task to complete concurrently.
+    */
     Task& also(std::function<void()> action);
+
+    /**
+    * Schedules a task to occur concurrently with the previous task with the given priority
+    *  on any thread.
+    * @arg action the task to perform.
+    * @arg deadline the priority of the task. (added to the previous task's deadline).
+    */
     Task& also(std::function<void()> action, uint64_t deadline);
+
+    /**
+    * Schedules a task to occur concurrently with the previous task with the given priority
+    *  on any thread.
+    * @arg action the task to perform.
+    * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
+    */
     Task& alsoAbsolute(std::function<void()> action, uint64_t deadline);
 
+    /**
+    * Schedules a task to occur concurrently with the previous task
+    *  on the associated worker thread.
+    * @arg worker the associated worker thread.
+    * @arg the task to complete concurrently.
+    */
     Task& also(size_t worker, std::function<void()> action);
+
+    /**
+    * Schedules a task to occur concurrently with the previous task with the given priority
+    *  on the associated worker thread.
+    * @arg worker the associated worker thread.
+    * @arg action the task to perform.
+    * @arg deadline the priority of the task. (added to the previous task's deadline).
+    */
     Task& also(size_t worker, std::function<void()> action, uint64_t deadline);
+
+    /**
+    * Schedules a task to occur concurrently with the previous task with the given priority
+    *  on the associated worker thread.
+    * @arg worker the associated worker thread.
+    * @arg action the task to perform.
+    * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
+    */
     Task& alsoAbsolute(size_t worker, std::function<void()> action, uint64_t deadline);
 
     /**
     * Returns the associated task_t* of this object and then !empties this object!
+    *  This function is intended to be used by the RFUS implementing classes ONLY!
     * @return the root of the built task_t* structure.
     */
     task_t* getTask();
