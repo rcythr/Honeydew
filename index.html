@@ -180,7 +180,7 @@
 <h2>
 <a name="pipelines" class="anchor" href="#pipelines"><span class="octicon octicon-link"></span></a>Pipelines</h2>
 
-<p>Pipelines are a helper set of templates that add serious power to the tasking system described above. The pipeline class does nothing that a user could not already do, but simply wraps it in a clean, no-nonsense interface. The following is the typical usage of a pipeline:</p>
+<p><strong>Pipelines</strong> are a helper set of templates that add serious power to the tasking system described above. The <strong>Pipeline</strong> class does nothing that a user could not already do, but simply wraps it in a clean, no-nonsense interface. The following is the typical usage of a pipeline:</p>
 
 <pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
         return 42;
@@ -189,11 +189,11 @@
     }).close());
 </code></pre>
 
-<p>In the above code the first task is scheduled and returns a value of 42. This value is stored on the heap and then passed into the second task. The second task does not return a value and thus can be closed. The close() function returns a task_t* similar to the Task helper class. In fact, the Pipeline template uses the Task class internally.</p>
+<p>In the above code the first task is scheduled and returns a value of <strong>42</strong>. This value is stored on the heap and then passed into the second task. The second task does not return a value and thus can be closed. The <strong>close()</strong> function returns a <strong>task_t</strong> similar to the <strong>Task</strong> helper class. In fact, the <strong>Pipeline</strong> template uses the <strong>Task</strong> class internally.</p>
 
-<p>Pipelines support the same <strong>action</strong>, <strong>[worker]</strong>, <strong>[deadline]</strong> function arguments as the Task class. </p>
+<p>Pipelines support the same <strong>action</strong>, <strong>[worker]</strong>, <strong>[deadline]</strong> function arguments as the <strong>Task</strong> class. </p>
 
-<p>Ideally pipelines will always end with a function that returns void. However, in many cases this is not possible, so instead of adding a dummy function at the end of the pipeline, resources can be saved by using endWith instead of then. For example:</p>
+<p>Ideally pipelines will always end with a function that returns <strong>void</strong>. However, in many cases this is not possible, so instead of adding a dummy function at the end of the pipeline, resources can be saved by using <strong>endWith</strong> instead of <strong>then</strong>. For example:</p>
 
 <pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
         return 42;
@@ -203,7 +203,7 @@
     }));
 </code></pre>
 
-<p>No resources will be allocated for the bool returned from the final function. This value will simply be discarded after it is returned. closeWith returns a task_t* the same as close() does for tasks returning void.</p>
+<p>No resources will be allocated for the <strong>bool</strong> returned from the last function. This value will simply be discarded after it is returned. <strong>closeWith</strong> returns a <strong>task_t</strong> the same as <strong>close()</strong> does for tasks returning <strong>void</strong>.</p>
 
 <p>Pipelines can be tricky because there are three types of pipelines:</p>
 
@@ -213,7 +213,7 @@
 <li>Forked Pipeline (Takes Parameter, Parameter is shared)</li>
 </ul><p>When you are working with pipelines you do not need to specify which type of pipeline to create - this is done automatically. You simply need to be aware what operations are available to you based on the current pipeline.</p>
 
-<p>The Pipeline::start() function handles the first  transition from a void pipeline to a normal pipeline for you automatically. Thus pipelines always start in the normal state. The following table shows the effects of various member functions on the state of the pipeline:</p>
+<p>The <strong>Pipeline::start()</strong> function handles the first transition from a <strong>Void Pipeline</strong> to a <strong>Normal Pipeline</strong> for you automatically. Thus pipelines always start in the <strong>Normal Pipeline</strong>. The following table shows the effects of various member functions on the state of the pipeline:</p>
 
 <h3>
 <a name="normal-pipeline" class="anchor" href="#normal-pipeline"><span class="octicon octicon-link"></span></a>Normal Pipeline</h3>
@@ -243,11 +243,11 @@
 <li>join w/o return val     -&gt; Void Pipeline</li>
 <li>fork w/ return val      -&gt; Forked Pipeline</li>
 <li>fork w/o return val     -&gt; Forked Pipeline</li>
-</ul><p>Void pipelines and Forked pipelines support the fork operation. This operation simply spins off another task that takes the result of the previous operation (if any). No tasks will wait for this task to complete. It is completely indepedent.</p>
+</ul><p><strong>Void Pipelines</strong> and <strong>Forked Pipelines</strong> support the <strong>fork</strong> operation. This operation simply spins off another task that takes the result of the previous operation (if any). No tasks will wait for this task to complete. It is completely independent.</p>
 
-<p>Normal and Void pipelines support the then operation. The then operation will complete the given task after the last task(s) have completed (exclusing forks). If you only use the then operation you will never find yourself in the Forked Pipeline.</p>
+<p><strong>Normal Pipelines</strong> and <strong>Void Pipelines</strong> support the <strong>then</strong> operation. The <strong>then</strong> operation will complete the given task after the last tasks have completed (exclusing <strong>fork</strong>). If you only use the <strong>then</strong> operation you will never find yourself in the <strong>Forked Pipeline</strong>.</p>
 
-<p>If you use the split function in the Normal Pipeline you will find yourself in the Forked Pipeline. The return value before the split will be passed into all subsequent calls up to and including the join call that leaves the Forked Pipeline. Thus the split is equivalent to a then that can share the return value from before it with subsequent calls. All return values in the Forked Pipeline are ignored except for the final "join" call that leaves the Forked Pipeline. The example below illustrates the sematics of the Forked Pipeline.</p>
+<p>If you use the <strong>split</strong> function in the <strong>Normal Pipeline</strong> you will find yourself in the <strong>Forked Pipeline</strong>. The return value before the <strong>split</strong> will be passed into all subsequent calls up to and including the <strong>join</strong> call that leaves the <strong>Forked Pipeline</strong>. Thus the <strong>split</strong> is equivalent to a <strong>then</strong> that can share the return value from before it with subsequent calls. All return values in the <strong>Forked Pipeline</strong> are ignored except for the final <strong>join</strong> call that leaves the <strong>Forked Pipeline</strong>. The example below illustrates the semantics of <strong>Pipelines</strong>.</p>
 
 <pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
         return 42;
@@ -265,33 +265,37 @@
     }).close()); 
 </code></pre>
 
-<p>The above "split", "also", "also" (w/ return), and "join" calls all happen concurrently. If the pipeline were a Task class the split would be a then and the rest would be "also" calls. </p>
+<p>The above <strong>split</strong>, <strong>also</strong>, <strong>also</strong> (w/ return), and <strong>join</strong> calls all happen concurrently. If the pipeline were a <strong>Task</strong> class the <strong>split</strong> would be a <strong>then</strong> and the rest would be <strong>also</strong> calls. </p>
 
-<p>Other than taking care to use split and join correctly the usage of the pipeline system should be fairly straightforward.</p>
+<p>Other than taking care to use <strong>split</strong> and <strong>join</strong> correctly the usage of the pipeline system should be fairly straightforward.</p>
 
 <h1>
 <a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies:</h1>
 
 <ul>
-<li>C++11 Standard Compliant Compiler (Clang 3.1, GCC 4.8, Etc). Older versions than the above <em>may</em> work depending on compliance.</li>
+<li>
+<strong>C++11 Standard Compliant Compiler</strong> (Clang 3.1, GCC 4.8, Etc). Older versions than the above <em>may</em> work depending on compliance.</li>
 </ul><h1>
 <a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation Instructions</h1>
 
-<p>On linux or mingw simply type "make". The static library will be in the /lib directory and all the necessary includes will be in /include.</p>
+<p>On <strong>linux</strong> or <strong>mingw</strong> simply type <strong>make</strong>. The static library will be in the <strong>./lib</strong> directory and all the necessary includes will be in <strong>./include</strong>.</p>
 
-<p>On other systems simply use your compiler to build the .cc files into a static library. From there use the <strong>rfus.h</strong>, <strong>rfus_type.h</strong>, <strong>task.h</strong>, <strong>join_semaphore.h</strong>, and <strong>pipeline.h</strong> files as includes.</p>
+<p>Windows systems are supported, but project files are not supplied. Users will need to create these manually. Simply use your compiler to build the <strong>.cc</strong> files into a static library. From there use the <strong>rfus.h</strong>, <strong>rfus_type.h</strong>, <strong>task.h</strong>, <strong>join_semaphore.h</strong>, and <strong>pipeline.h</strong> files as includes.</p>
 
 <h1>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
 
-<p>Documentation may be found in the associated .hpp files and in code.</p>
+<p>Documentation may be found in the associated <strong>.hpp</strong> files and in code.</p>
 
 <h1>
 <a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog</h1>
 
-<pre><code>1.0.1 - Pipeline implementation.
-1.0.0 - Basic implementation is complete with continuations and joins.
-</code></pre>
+<ul>
+<li>
+<strong>1.0.1</strong> - Pipeline implementation.</li>
+<li>
+<strong>1.0.0</strong> - Basic implementation is complete with continuations and joins.</li>
+</ul>
       </section>
     </div>
 
