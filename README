@@ -10,122 +10,136 @@ Credits
 	Richard W. Laughlin Jr.
 ------------------------------------------------------------------------------
 Project description
-	This library allows a user to schedule tasks to be run on a collection of worker
-	threads in a concurrent fashion. First a RFUS implementation must be created and stored
-	in a pointer somewhere. The default is a singleton located in the rfus library.
+
+This library allows a user to schedule tasks to be run on a collection 
+of worker threads in a concurrent fashion. First a RFUS implementation 
+must be created and stored in a pointer somewhere. The default is a 
+singleton located in the rfus library.
 	
-	Worker-agnostic tasks can be scheduled on 
-		1. The worker that completes the task (Worker Selection)
-		2. The order in which the worker completes the task (Priority)
-	Tasks which are tied to a particular worker thread can only be scheduled within the worker (priority)
+Worker-agnostic tasks can be scheduled on 
+	1. The worker that completes the task (Worker Selection)
+	2. The order in which the worker completes the task (Priority)
 	
-	Currently there are 4 RFUS implementations:
-		* ROUND_ROBIN 
-			Worker selection is ROUND_ROBIN
-			Tasks are strictly FIFO
-		* ROUND_ROBIN_WITH_PRIORITY 
-			Worker selection is ROUND_ROBIN
-			Tasks are reordered to priority
-		* LEAST_BUSY 
-			Worker selection is onto the least busy worker
-			Tasks are strictly FIFO
-		* LEAST_BUSY_WITH_PRIORITY 
-			Worker selection is onto the least busy worker
-			Tasks are reordered to priority
+Tasks which are tied to a particular worker thread can only be 
+scheduled within the worker (priority)
 	
-	Each has benefits and drawbacks which are discussed in the rfus_type.hpp file.
-	The choice of implementation depends largely on the type of tasks you're processing
-	and the rate at which they come in
-	
+Currently there are 4 RFUS implementations:
+	* ROUND_ROBIN 
+		Worker selection is ROUND_ROBIN
+		Tasks are strictly FIFO
+	* ROUND_ROBIN_WITH_PRIORITY 
+		Worker selection is ROUND_ROBIN
+		Tasks are reordered to priority
+	* LEAST_BUSY 
+		Worker selection is onto the least busy worker
+		Tasks are strictly FIFO
+	* LEAST_BUSY_WITH_PRIORITY 
+		Worker selection is onto the least busy worker
+		Tasks are reordered to priority
+
+Each has benefits and drawbacks which are discussed in the rfus_type.hpp
+file. The choice of implementation depends largely on the type 
+of tasks you're processing and the rate at which they come in.
+
 ------------------------------------------------------------------------------
 Usage
 
-	== Creation ==
+== Creation ==
 
-	The code below creates a RFUS and stores it into the global RFUS variable.
-	The RFUS will schedule worker-agnostic threads in a round robin fashion to the 2
-	available workers. The workers will grab tasks from the queues 1 at a time.
-	
-		RFUS = createRFUS(ROUND_ROBIN, 2, 1);
-	
-	The code below creates a RFUS and stores it into a custom variable.
-	The RFUS will schedule worker-agnostic threads into the least busy queue at that time
-	to the 5 available workers. The workers will grab tasks from the queues 2 at a time.
-	Additionally the tasks will be ordered in their queues based on their priority (lowest is highest)
-	
-		RFUSInterface* myRFUS = createRFUS(LEAST_BUSY_WITH_PRIORITY, 5, 2);
+The code below creates a RFUS and stores it into the global RFUS 
+variable.  The RFUS will schedule worker-agnostic threads in a 
+round robin fashion to the 2 available workers. The workers will
+grab tasks from the queues 1 at a time.
 
-	== Function Specification ==
-	Once a RFUS has been created it is possible to schedule tasks onto it using the Task helper class.
-	This class has a lot of functions which do similar, but different things.
-	The order in which the arguments are supplied is helpful to understand the arguments.
+	RFUS = createRFUS(ROUND_ROBIN, 2, 1);
+
+The code below creates a RFUS and stores it into a custom variable.  
+The RFUS will schedule worker-agnostic threads into the least busy 
+queue at that time for the 5 available workers. The workers will grab 
+tasks from the queues 2 at a time. Additionally the tasks will be 
+ordered in their queues based on their priority (lowest is highest).
+
+	RFUSInterface* myRFUS = createRFUS(LEAST_BUSY_WITH_PRIORITY, 5, 2);
+
+== Function Specification ==
+Once a RFUS has been created it is possible to schedule tasks onto it 
+using the Task helper class. This class has a lot of functions which do 
+similar, but different things. The order in which the arguments are 
+supplied is helpful to understand the semantics.
 
 	[Optional] Worker ID
 	[Required] Functor to Task
 	[Optional] Priority/Deadline
-		
-	== Then Relationships ==
-	Below two tasks are created which will happen, in order, possibly on different threads.
 	
+== Then Relationships ==
+Below two tasks are created which will happen, in order, possibly on different 
+threads.
+
 	RFUS->post(Task(funcA).then(funcB));
-	
-	== Also Relationships ==
-	Below two tasks are created which may happen concurrently on two different threads.
-	
+
+== Also Relationships ==
+Below two tasks are created which may happen concurrently on two different 
+threads.
+
 	RFUS->post(Task(funcA).also(funcB));
-	
-	== Mixing Then and Also Relationships ==
-	Then and Also relationships may be mixed to great effect. A then relationship after an also
-	relationship will cause the then relationship to run only after all of the tasks in the also
-	relationship have completed.
-	
-	In the code below funcD will run only after funcA, funcB, and funcC have completed.
-	
+
+== Mixing Then and Also Relationships ==
+Then and Also relationships may be mixed to great effect. A then relationship 
+after an also relationship will cause the then relationship to run only after 
+all of the tasks in the also relationship have completed. 
+
+In the code below funcD will run only after funcA, funcB, and funcC have 
+completed.
+
 	RFUS->post(Task(funcA).also(funcB).also(funcC).then(funcD));
-	
-	== Understanding Priority ==
-	It is also possible (and suggested for priority queues) to supply a priority to each task.
-	RFUS is agnostic to the meaning of the priorities - you can define these however you wish.
-	
-	The code below will use some function currentTime() to get the current time (in ms, ns, s, ...).
-	The first task will be prioritized to the currentTime() the second task will be prioritized to
-	currentTime()+15. The third task will be prioritized to 1500.
-	
+
+== Understanding Priority ==
+It is also possible (and suggested for priority queues) to supply a priority 
+to each task. RFUS is agnostic to the meaning of the priorities - you can 
+define these however you wish.
+
+The code below will use some function currentTime() to get the current time 
+(in ms, ns, s, ...). The first task will be prioritized to the currentTime() 
+the second task will be prioritized to currentTime()+15. The third task will 
+be prioritized to 1500.
+
 	RFUS->post(Task([] () {
-        printf("I HAPPEN FIRST\n");
-    }, currentTime()).then([] () {
-        printf("I HAPPEN SECOND\n");
-    }, 15).thenAbsolute([] () {
+		printf("I HAPPEN FIRST\n");
+	}, currentTime()).then([] () {
+		printf("I HAPPEN SECOND\n");
+	}, 15).thenAbsolute([] () {
 		printf("I HAPPEN THIRD\n");
 	}, 1500);
-	
-	== Tieing to Workers ==
-	Finally it is possible to tie tasks to certain workers. This can be useful to avoid mutexes.
-	
-	In the code below the second task will happen strictly after the first task even though an
-	also relationship is used. This is because the first and second tasks share the same worker.
-	The third task may happen at the same time as either of the two workers. This is because it is
-	tied to a totally different worker than the previous two tasks.
-	
+
+== Tieing to Workers ==
+Finally it is possible to tie tasks to certain workers. This can be useful to 
+avoid mutexes.
+
+In the code below the second task will happen strictly after the first task 
+even though an also relationship is used. This is because the first and second 
+tasks share the same worker. The third task may happen at the same time as 
+either of the two workers. This is because it is tied to a totally different 
+worker than the previous two tasks.
+
 	RFUS->post(Task(0, [] () {
-        printf("I HAPPEN FIRST\n");
-    }).also(0, [] () {						// also creates as at-the-same-time dependency.
-        printf("I HAPPEN SECOND\n");
-    }).also(1, [] () {
+		printf("I HAPPEN FIRST\n");
+	}).also(0, [] () {
+		printf("I HAPPEN SECOND\n");
+	}).also(1, [] () {
 		printf("I HAPPEN AT THE SAME TIME.\n");
 	});
 
 -------------------------------------------------------------------------------
 Dependencies:
 
-	* C++11 Standard Compliant Compiler (Clang 3.1, GCC 4.8, Etc)
-			Older versions than the above *may* work depending on compliance.
+* C++11 Standard Compliant Compiler (Clang 3.1, GCC 4.8, Etc)
+	Older versions than the above *may* work depending on compliance.
 
 -------------------------------------------------------------------------------
 Documentation
 	Documentation may be found in the associated .hpp files and in code.
-	
+
 -------------------------------------------------------------------------------
 Changelog
-	
+
 	1.0.0 - Basic implementation is complete with continuations and joins.
