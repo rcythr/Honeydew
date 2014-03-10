@@ -143,7 +143,7 @@ Task& Task::also(std::function<void()> action)
     else
     {
         join = leaf->join;
-        ++join->n;
+        join->increment();
     }
     leaf = leaf->next = new task_t(action, 0, 0);
     leaf->join = join;
@@ -161,7 +161,7 @@ Task& Task::also(std::function<void()> action, uint64_t deadline)
     else
     {
         join = leaf->join;
-        ++join->n;
+        join->increment();
     }
     leaf = leaf->next = new task_t(action, 0, leaf->priority + deadline);
     leaf->join = join;
@@ -179,7 +179,7 @@ Task& Task::alsoAbsolute(std::function<void()> action, uint64_t deadline)
     else
     {
         join = leaf->join;
-        ++join->n;
+        join->increment();
     }
     leaf = leaf->next = new task_t(action, 0, deadline);
     leaf->join = join;
@@ -197,7 +197,7 @@ Task& Task::also(size_t worker, std::function<void()> action)
     else
     {
         join = leaf->join;
-        ++join->n;
+        join->increment();
     }
     leaf = leaf->next = new task_t(action, worker, 0);
     leaf->join = join;
@@ -215,7 +215,7 @@ Task& Task::also(size_t worker, std::function<void()> action, uint64_t deadline)
     else
     {
         join = leaf->join;
-        ++join->n;
+        join->increment();
     }
     leaf = leaf->next = new task_t(action, worker, leaf->priority + deadline);
     leaf->join = join;
@@ -233,7 +233,7 @@ Task& Task::alsoAbsolute(size_t worker, std::function<void()> action, uint64_t d
     else
     {
         join = leaf->join;
-        ++join->n;
+        join->increment();
     }
     leaf = leaf->next = new task_t(action, worker, deadline);
     leaf->join = join;

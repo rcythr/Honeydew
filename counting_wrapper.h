@@ -15,7 +15,7 @@
 template<typename QueueType>
 class CountingWrapper
 {
-private:
+public:
 
     /**
     * Constructs a CountingWrapper with size of zero.
