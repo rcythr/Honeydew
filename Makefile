@@ -25,6 +25,7 @@ library: clean
 	cp rfus_type.h include/rfus_type.h
 	cp task.h include/task.h
 	cp pipeline.h include/pipeline.h
+	cp join_semaphore.h include/join_semaphore.h
 
 tests:
 	mkdir bin
