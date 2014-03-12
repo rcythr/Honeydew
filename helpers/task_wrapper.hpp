@@ -37,7 +37,6 @@ public:
     */
     Task(const Task& other) = delete;
 
-
     /**
     * Initializes a previously uninitialized task. This function throws std::runtime_error
     *  if the task was previously initialized.

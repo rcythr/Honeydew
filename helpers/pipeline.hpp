@@ -584,6 +584,9 @@ struct Pipeline
 
 }
 
+/**
+* Struct containing static methods to create a pipeline of tasks.
+*/
 struct Pipeline
 {
     /**
