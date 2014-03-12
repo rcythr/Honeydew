@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include "task.hpp"
+#include "helpers/task_wrapper.hpp"
 #include "join_semaphore.hpp"
 
-#include <functional>
 #include <utility>
 #include <type_traits>
 
@@ -188,7 +187,7 @@ struct Pipeline<void>
     task_t* closeWith(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
         task.then([=] () { action(); }, worker, deadline);
-        return task.getTask();
+        return task.close();
     }
     
     /**
@@ -202,7 +201,7 @@ struct Pipeline<void>
     task_t* closeWithAbsolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
         task.thenAbsolute([=] () { action(); }, worker, deadline);
-        return task.getTask();
+        return task.close();
     }
     
     /**
@@ -211,7 +210,7 @@ struct Pipeline<void>
     */
     task_t* close()
     {
-        return task.getTask();
+        return task.close();
     }
 };
 
@@ -418,7 +417,7 @@ struct ForkedPipeline
     */
     task_t* close()
     {
-        return task.getTask();
+        return task.close();
     }
 };
 
@@ -510,7 +509,7 @@ struct Pipeline
     task_t* closeWith(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         task.then([=] () { action(*prev_result); delete prev_result; }, worker, deadline);
-        return task.getTask();
+        return task.close();
     }
     
     /**
@@ -524,7 +523,7 @@ struct Pipeline
     task_t* closeWithAbsolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         task.thenAbsolute([=] () { action(*prev_result); delete prev_result; }, worker, deadline);
-        return task.getTask();
+        return task.close();
     }
     
     /**
@@ -578,7 +577,7 @@ struct Pipeline
     task_t* close()
     {
         task.then([=] () { delete prev_result; });
-        return task.getTask();
+        return task.close();
     }
 
 };

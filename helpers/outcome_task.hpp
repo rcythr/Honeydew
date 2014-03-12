@@ -3,6 +3,9 @@
 #include "rfus.hpp"
 #include "task.hpp"
 
+namespace rfus
+{
+
 struct OutcomeTask
 {
     RFUSInterface* rfus;
@@ -42,12 +45,14 @@ struct OutcomeTask
             try
             {
                 functor();
-                if(success_task) { rfus->post(success_task); //TODO; Delete failure_task }
+                if(success_task) { rfus->post(success_task); delete failure_task; }
             }
             catch(...)
             {
-                if(failure_task) { rfus->post(failure_task); //TODO: Delete success_task }
+                if(failure_task) { rfus->post(failure_task); delete success_task; }
             }
         }, worker, priority).getTask();
     }
 };
+
+}

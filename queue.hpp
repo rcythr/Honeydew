@@ -38,15 +38,17 @@ public:
     */
     void push(T* task)
     {
-        std::unique_lock<std::mutex> lg(m);
-        if(first == nullptr)
         {
-            first = last = task;
-        }
-        else
-        {
-            last->next = task;
-            last = task;
+            std::unique_lock<std::mutex> lg(m);
+            if(first == nullptr)
+            {
+                first = last = task;
+            }
+            else
+            {
+                last->next = task;
+                last = task;
+            }
         }
         cd.notify_all();
     }

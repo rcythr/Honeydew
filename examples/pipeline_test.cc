@@ -2,7 +2,7 @@
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #include "rfus.hpp"
-#include "pipeline.h"
+#include "helpers/pipeline.hpp"
 
 #include <iostream>
 #include <thread>
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     }).then([&] (int val) {      // In 46
         printf("%d\n", val);
         cv.notify_all();
-    }).close()); 
+    })); 
 
     cv.wait(lg);
 

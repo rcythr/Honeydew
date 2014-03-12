@@ -20,7 +20,12 @@ struct RFUSInterface
     * Schedules the given task's task_t* sub-object
     * @param t the task to schedule.
     */
-    virtual RFUSInterface* post(Task& t) = 0;
+    template<typename TaskType>
+    RFUSInterface* post(TaskType&& t)
+    {
+        post(t.close());
+        return this;
+    }
 
     /**
     * Schedules a properly built task_t* object directly.

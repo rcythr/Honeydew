@@ -1,7 +1,10 @@
 #pragma once
 
 #include "rfus.hpp"
-#include "task.hpp"
+#include "helpers/task_wrapper.hpp"
+
+namespace rfus
+{
 
 struct ConditionalTask
 {
@@ -11,39 +14,50 @@ struct ConditionalTask
     size_t worker;
     uint64_t priority;
 
-    Task on_true;
-    Task on_false;
+    Task on_true_task;
+    Task on_false_task;
 
     ConditionalTask(RFUSInterface* rfus, std::function<bool()> condition, size_t worker=0, uint64_t priority=0)
         : rfus(rfus)
         , conditional(condition)
-        , on_true(nullptr)
-        , on_false(nullptr)
     {
     }
 
     ConditionalTask& on_true(Task&& other)
     {
-        on_true = std::forward<Task>(other);
+        on_true_task = std::forward<Task>(other);
         return *this;
     }
 
-    Task& on_false(Task&& other)
+    ConditionalTask& on_false(Task&& other)
     {
-        on_false = std::forward<Task>(other);
+        on_false_task = std::forward<Task>(other);
         return *this;
     }
 
     task_t* close()
     {
-        task_t* true_task = on_true.getTask();
-        task_t* false_task = on_false.getTask();
+        task_t* true_task = on_true_task.close();
+        task_t* false_task = on_false_task.close();
+
+        // Necessary to prevent capture of 'this'
+        //   Dammit C++.
+        RFUSInterface* rfus_copy = rfus;
+        std::function<bool()> conditional_copy = conditional;
 
         return Task([=] () {
-            if(conditional())
-                if(true_task) { rfus->post(true_task); //TODO: Delete false_task }
+            if(conditional_copy())
+            {
+                if(true_task) rfus->post(true_task); 
+                if(false_task) delete false_task; 
+            }
             else
-                if(on_false) { rfus->post(on_false); //TODO: Delete true_task }
-        }, worker, priority).getTask();
+            {
+                if(false_task) rfus->post(false_task); 
+                if(true_task) delete true_task;
+            }
+        }, worker, priority).close();
     }
 };
+
+}

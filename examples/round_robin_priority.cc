@@ -2,6 +2,7 @@
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #include "rfus.hpp"
+#include "helpers/task_wrapper.hpp"
 
 #include <iostream>
 #include <thread>

@@ -77,6 +77,8 @@ struct RFUSImpl : public RFUSInterface
                 }
 
                 next = task->next;
+                task->next = nullptr;
+                task->continuation = nullptr;
                 delete task;
                 task = next;
             }
@@ -103,11 +105,6 @@ struct RFUSImpl : public RFUSInterface
             task = next;
         }
         return this;
-    }
-
-    virtual RFUSInterface* post(Task& t)
-    {
-        return post(t.getTask());
     }
 
     std::vector<std::thread> threads;
