@@ -48,12 +48,12 @@ struct ConditionalTask
         return Task([=] () {
             if(conditional_copy())
             {
-                if(true_task) rfus->post(true_task); 
+                if(true_task) rfus_copy->post(true_task); 
                 if(false_task) delete false_task; 
             }
             else
             {
-                if(false_task) rfus->post(false_task); 
+                if(false_task) rfus_copy->post(false_task); 
                 if(true_task) delete true_task;
             }
         }, worker, priority).close();

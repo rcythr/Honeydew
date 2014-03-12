@@ -46,4 +46,5 @@ tests:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/pipeline_test examples/pipeline_test.cc -Iinclude -Llib -lrfus
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/exception_test examples/exception_test.cc -Iinclude -Llib -lrfus
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/conditional_test examples/conditional_test.cc -Iinclude -Llib -lrfus
+	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/outcome_test examples/outcome_test.cc -Iinclude -Llib -lrfus
 
