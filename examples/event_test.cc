@@ -1,3 +1,6 @@
+// This file is part of RFUS (Rich's Fast Userspace Scheduling)
+// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+
 /*
 * This example shows the typical syntax associated with the EventProcessor 
 *   (helpers/event_processor.hpp) helper class.
