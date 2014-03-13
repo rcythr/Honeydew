@@ -6,7 +6,7 @@
 *   (helpers/event_processor.hpp) helper class.
 */
 
-#include "helpers/event_processor.hpp"
+#include <rfus/helpers/event_processor.hpp>
 
 #include <mutex>
 #include <condition_variable>

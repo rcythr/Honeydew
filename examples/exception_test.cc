@@ -6,8 +6,8 @@
 * (helpers/exception_task.hpp) helper class.
 */
 
-#include "rfus.hpp"
-#include "helpers/exception_task.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/exception_task.hpp>
 
 #include <iostream>
 #include <thread>

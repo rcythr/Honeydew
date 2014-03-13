@@ -6,8 +6,8 @@
 *   (helpers/outcome_task.hpp) helper class.
 */
 
-#include "rfus.hpp"
-#include "helpers/outcome_task.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/outcome_task.hpp>
 
 #include <iostream>
 #include <thread>

@@ -6,8 +6,8 @@
 *   (helpers/conditional_task.hpp) helper class.
 */
 
-#include "rfus.hpp"
-#include "helpers/conditional_task.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/conditional_task.hpp>
 
 #include <iostream>
 #include <thread>
