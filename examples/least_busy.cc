@@ -7,9 +7,9 @@
 * on the main thread which will then exit, ending the program.
 */
 
-#include "rfus.hpp"
-#include "helpers/task_wrapper.hpp"
-#include "helpers/post_and_wait.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/task_wrapper.hpp>
+#include <rfus/helpers/post_and_wait.hpp>
 
 #include <iostream>
 #include <thread>

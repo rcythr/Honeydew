@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "helpers/task_wrapper.hpp"
-#include "detail/join_semaphore.hpp"
+#include <rfus/helpers/task_wrapper.hpp>
+#include <rfus/detail/join_semaphore.hpp>
 
 #include <utility>
 #include <type_traits>

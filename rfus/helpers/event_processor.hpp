@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "rfus.hpp"
-#include "helpers/task_wrapper.hpp"
-#include "helpers/pipeline.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/task_wrapper.hpp>
+#include <rfus/helpers/pipeline.hpp>
 
 #include <unordered_map>
 

@@ -1,5 +1,5 @@
 
-#include "helpers/post_and_wait.hpp"
+#include <rfus/helpers/post_and_wait.hpp>
 
 #include <mutex>
 #include <condition_variable>

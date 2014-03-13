@@ -9,8 +9,8 @@
 *     is vital to understanding its behavior.
 */
 
-#include "rfus.hpp"
-#include "helpers/pipeline.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/pipeline.hpp>
 
 #include <iostream>
 #include <thread>
