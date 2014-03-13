@@ -4,7 +4,7 @@
 #include "rfus.hpp"
 
 #include "detail/queue.hpp"
-#include "detail/priority_queue.hpp"
+#include "detail/binary_min_heap.hpp"
 #include "detail/counting_wrapper.hpp"
 #include "detail/join_semaphore.hpp"
 
@@ -17,7 +17,7 @@ using namespace rfus;
 RFUSInterface* rfus::RFUS;
 
 typedef CountingWrapper<Queue<task_t>> CountingQueue;
-typedef CountingWrapper<PriorityQueue<task_t>> PriorityCountingQueue;
+typedef CountingWrapper<BinaryMinHeap<task_t>> PriorityCountingQueue;
 
 template<typename QueueType>
 struct RFUSImpl : public RFUSInterface
@@ -131,8 +131,8 @@ RFUSInterface* rfus::createRFUS(RFUSType type, size_t num_threads, size_t step_s
             return running_count.fetch_add(1) % num_queues;
         });
     case ROUND_ROBIN_WITH_PRIORITY:
-        return new RFUSImpl<PriorityQueue<task_t>>(num_threads, step_size,
-        [] (std::atomic_int_fast32_t& running_count, task_t* task, PriorityQueue<task_t>* queues, size_t num_queues) {
+        return new RFUSImpl<BinaryMinHeap<task_t>>(num_threads, step_size,
+        [] (std::atomic_int_fast32_t& running_count, task_t* task, BinaryMinHeap<task_t>* queues, size_t num_queues) {
             return running_count.fetch_add(1) % num_queues;
         });
     case LEAST_BUSY:

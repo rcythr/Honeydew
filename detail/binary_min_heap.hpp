@@ -53,7 +53,7 @@ public:
             // Increase the size to reflect the new size of the heap.
             ++size;
         }
-        cv.notify_one();
+        cd.notify_one();
     }
 
     /**
@@ -70,7 +70,7 @@ public:
         // Block until we have at least one task to return.
         while(size == 0)
         {
-            cv.wait(lg);
+            cd.wait(lg);
         }
 
         size_t gathered = 0;
@@ -126,7 +126,7 @@ private:
     {
         T* swap_space;
         swap_space = heap[indexA];
-        heap[indexA] = hea[indexB];
+        heap[indexA] = heap[indexB];
         heap[indexB] = swap_space;
     }
 
@@ -153,6 +153,8 @@ private:
 
     void siftUp(size_t index)
     {
+        if(index == 0) return;
+
         size_t parent = parent_index(index);
 
         // If our parent has a higher priority than us
