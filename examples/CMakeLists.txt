@@ -1,7 +1,8 @@
+# This file is part of RFUS (Rich's Fast Userspace Scheduling)
+# RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 add_executable(round_robin round_robin.cc)
 target_link_libraries(round_robin rfus)
-target_link_libraries(round_robin pthread)
 
 add_executable(round_robin_priority round_robin_priority.cc)
 target_link_libraries(round_robin_priority rfus)

@@ -205,9 +205,17 @@ Other than taking care to use **split** and **join** correctly the usage of the 
 
 # Installation Instructions
 
-On **linux** or **mingw** simply type **make**. The static library will be in the **./lib** directory and all the necessary includes will be in **./include**.
+To simply build the library and include directories into a build folder, from command line:
 
-Windows systems are supported, but project files are not supplied. Users will need to create these manually. Simply use your compiler to build the **.cc** files into a static library. From there use the **rfus.h**, **rfus_type.h**, **task.h**, **join_semaphore.h**, and **pipeline.h** files as includes.
+    mkdir build
+    cd build
+    cmake ..
+    make
+    make install
+
+The library will be in [PROJECT ROOT]/build/lib
+The includes will be in [PROJECT ROOT]/build/include/
+The test executables will bein [PROJECT ROOT]/build/bin
 
 # Documentation
 
