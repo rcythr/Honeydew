@@ -63,6 +63,7 @@ int main(int argc, char* argv[])
             if(val != 0)
                 printf("%lu ", val);
         }
+        printf("\n");
     });
 
     // Post to the RFUS.
