@@ -2,6 +2,7 @@
 
 #include "rfus.hpp"
 #include "helpers/task_wrapper.hpp"
+#include "helpers/pipeline.hpp"
 
 #include <unordered_map>
 
@@ -25,24 +26,40 @@ struct EventProcessor
 {
 public:
 
+    EventProcessor(RFUSInterface* rfus)
+        : rfus(rfus)
+    {
+    }
+
     template<typename CastType, typename EventDataType>
-    EventProcessor& bind_constructable(KeyType key_value, std::function<void(EventDataType&) handler, 
-        size_t construction_worker=0, uint64_t construction_priority=0, size_t handler_worker=0, uint64_t handler_priority=0)
+    EventProcessor& bind_constructable(KeyType key_value, std::function<void(EventDataType&)> handler, 
+                                       size_t handler_worker=0, uint64_t handler_priority=0,
+                                       size_t construction_worker=0, uint64_t construction_priority=0) 
     {
         RFUSInterface*& rfus_copy = rfus;
-        event_handlers.emplace(
-            key_value,
-            detail::GenericFunction{[=](void* data) {
-                rfus_copy->post(
-                    Pipeline::start<EventDataType*>([](){ 
-                        return new EventDataType(static_cast<CastType*>(data));
-                    }, construction_worker, construction_priority).then([] (EventDataType* event) {
+        if(construction_worker == handler_worker)
+        {
+            event_handlers.emplace(
+                key_value,
+                detail::GenericFunction{[=](void* data) {
+                    EventDataType event(static_cast<CastType*>(data));
+                    handler(event);
+                }, handler_worker, handler_priority}
+            );
+        }
+        else
+        {
+            event_handlers.emplace(
+                key_value,
+                detail::GenericFunction{[=](void* data) {
+                    auto event = new EventDataType(static_cast<CastType*>(data));
+                    rfus_copy->post(Task([=] () {
                         handler(*event);
                         delete event;
-                    }, handler_worker, handler_priority)
-                );
-            }, worker, priority}
-        );
+                    }, handler_worker, handler_priority));
+                }, construction_worker, construction_priority}
+            );
+        }
     }
 
     template<typename CastType>
@@ -75,7 +92,7 @@ public:
    
 private: 
     RFUSInterface* rfus;
-    std::unordedred_map<KeyType, detail::GenericFunction> event_handlers;
+    std::unordered_map<KeyType, detail::GenericFunction> event_handlers;
 };
 
 }

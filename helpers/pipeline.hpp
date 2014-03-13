@@ -243,13 +243,16 @@ struct ForkedPipeline
     template<typename ReturnValue>
     ForkedPipeline<ForkReturn> also(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
+
         join_sem->increment();
         task.also([=] () { 
-            action(*prev_return);
-            if(join_sem->decrement() == 0)
+            action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return ForkedPipeline<ForkReturn>(std::move(task), prev_return, join_sem);
@@ -265,13 +268,16 @@ struct ForkedPipeline
     template<typename ReturnValue>
     ForkedPipeline<ForkReturn> alsoAbsolute(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
+
         join_sem->increment();
         task.alsoAbsolute([=] () { 
-            action(*prev_return);
-            if(join_sem->decrement() == 0)
+            action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return ForkedPipeline<ForkReturn>(std::move(task), prev_return, join_sem);
@@ -287,13 +293,16 @@ struct ForkedPipeline
     template<typename ReturnValue>
     ForkedPipeline<ForkReturn> fork(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
+
         join_sem->increment();
         task.fork([=] () {
-            action(*prev_return);
-            if(join_sem->decrement() == 0)
+            action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return ForkedPipeline<ForkReturn>(std::move(task), prev_return, join_sem);
@@ -309,13 +318,16 @@ struct ForkedPipeline
     template<typename ReturnValue>
     ForkedPipeline<ForkReturn> forkAbsolute(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
+
         join_sem->increment();
         task.forkAbsolute([=] () {
-            action(*prev_return);
-            if(join_sem->decrement() == 0)
+            action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return ForkedPipeline<ForkReturn>(std::move(task), prev_return, join_sem);
@@ -330,13 +342,16 @@ struct ForkedPipeline
     */
     Pipeline<void> join(std::function<void(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
+
         join_sem->increment();
         task.also([=] () { 
-            action(*prev_return);
-            if(join_sem->decrement() == 0)
+            action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return Pipeline<void>(std::move(task));
@@ -351,13 +366,16 @@ struct ForkedPipeline
     */
     Pipeline<void> joinAbsolute(std::function<void(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
+
         join_sem->increment();
         task.alsoAbsolute([=] () { 
-            action(*prev_return);
-            if(join_sem->decrement() == 0)
+            action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return Pipeline<void>(std::move(task));
@@ -374,14 +392,16 @@ struct ForkedPipeline
     Pipeline<ReturnType> join(std::function<ReturnType(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         ReturnType* result = new ReturnType();
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
 
         join_sem->increment();
         task.also([=] () { 
-            *result = action(*prev_return);
-            if(join_sem->decrement() == 0)
+            *result = action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
@@ -398,14 +418,16 @@ struct ForkedPipeline
     Pipeline<ReturnType> joinAbsolute(std::function<ReturnType(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         ReturnType* result = new ReturnType();
+        auto& join_sem_ref = join_sem;
+        auto& prev_return_ref = prev_return;
 
         join_sem->increment();
         task.alsoAbsolute([=] () { 
-            *result = action(*prev_return);
-            if(join_sem->decrement() == 0)
+            *result = action(*prev_return_ref);
+            if(join_sem_ref->decrement() == 0)
             {
-                delete join_sem;
-                delete prev_return;
+                delete join_sem_ref;
+                delete prev_return_ref;
             }
         }, worker, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
@@ -448,7 +470,8 @@ struct Pipeline
     */ 
     Pipeline<void> then(std::function<void(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.then([=] () { action(*prev_result); delete prev_result; }, worker, deadline);
+        auto& prev_result_ref = prev_result;
+        task.then([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return Pipeline<void>(std::move(task));
     }
     
@@ -462,7 +485,8 @@ struct Pipeline
     */ 
     Pipeline<void> thenAbsolute(std::function<void(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.thenAbsolute([=] () { action(*prev_result); delete prev_result; }, worker, deadline);
+        auto& prev_result_ref = prev_result;
+        task.thenAbsolute([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return Pipeline<void>(std::move(task));
     }
 
@@ -477,8 +501,9 @@ struct Pipeline
     template<typename ReturnType>
     Pipeline<ReturnType> then(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& prev_result_ref = prev_result;
         ReturnType* result = new ReturnType();
-        task.then([=] () { *result = action(*prev_result); delete prev_result; }, worker, deadline);
+        task.then([=] () { *result = action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
     }
    
@@ -493,8 +518,9 @@ struct Pipeline
     template<typename ReturnType>
     Pipeline<ReturnType> thenAbolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& prev_result_ref = prev_result;
         ReturnType* result = new ReturnType();
-        task.then(worker, [=] () { *result = action(*prev_result); delete prev_result; }, deadline);
+        task.then(worker, [=] () { *result = action(*prev_result_ref); delete prev_result_ref; }, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
     }
 
@@ -508,7 +534,8 @@ struct Pipeline
     template<typename ReturnType>
     task_t* closeWith(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.then([=] () { action(*prev_result); delete prev_result; }, worker, deadline);
+        auto& prev_result_ref = prev_result;
+        task.then([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return task.close();
     }
     
@@ -522,7 +549,8 @@ struct Pipeline
     template<typename ReturnType>
     task_t* closeWithAbsolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.thenAbsolute([=] () { action(*prev_result); delete prev_result; }, worker, deadline);
+        auto& prev_result_ref = prev_result;
+        task.thenAbsolute([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return task.close();
     }
     
@@ -536,13 +564,14 @@ struct Pipeline
     template<typename ReturnType>
     ForkedPipeline<ReturnType> split(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& prev_result_ref = prev_result;
         join_semaphore_t* join_sem = new join_semaphore_t(1);
         task.then([=] () { 
-            action(*prev_result); 
+            action(*prev_result_ref); 
             if(join_sem->decrement() == 0)
             {
                 delete join_sem;
-                delete prev_result;
+                delete prev_result_ref;
             }
         }, worker, deadline);
         return ForkedPipeline<ReturnType>(std::move(task), prev_result, join_sem);
@@ -558,13 +587,14 @@ struct Pipeline
     template<typename ReturnType>
     ForkedPipeline<ReturnType> splitAbsolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
+        auto& prev_result_ref = prev_result;
         join_semaphore_t* join_sem = new join_semaphore_t(1);
         task.thenAbsolute([=] () { 
-            action(*prev_result);
+            action(*prev_result_ref);
             if(join_sem->decrement() == 0)
             {
                 delete join_sem;
-                delete prev_result;
+                delete prev_result_ref;
             }
         }, worker, deadline);
         return ForkedPipeline<ReturnType>(std::move(task), prev_result, join_sem);

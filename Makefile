@@ -15,6 +15,7 @@ library: clean
 	mkdir lib
 	mkdir include
 	mkdir include/helpers
+	mkdir bin
 	
 	# Compile everything into obj
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -c rfus.cc -o obj/rfus.o
@@ -36,15 +37,34 @@ library: clean
 	cp helpers/conditional_task.hpp include/helpers/conditional_task.hpp
 	cp helpers/outcome_task.hpp include/helpers/outcome_task.hpp
 	cp helpers/exception_task.hpp include/helpers/exception_task.hpp
+	cp helpers/event_processor.hpp include/helpers/event_processor.hpp
 
-tests:
-	mkdir bin
+tests: round_robin round_robin_priority least_busy least_busy_priority pipeline_test exception_test conditional_test outcome_test event_test
+
+round_robin:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin examples/round_robin.cc -Iinclude -Llib -lrfus
+
+round_robin_priority:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin_priority examples/round_robin_priority.cc -Iinclude -Llib -lrfus
+
+least_busy:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy examples/least_busy.cc -Iinclude -Llib -lrfus
+
+least_busy_priority:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/least_busy_priority examples/least_busy_priority.cc -Iinclude -Llib -lrfus
+
+pipeline_test:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/pipeline_test examples/pipeline_test.cc -Iinclude -Llib -lrfus
+
+exception_test:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/exception_test examples/exception_test.cc -Iinclude -Llib -lrfus
+
+conditional_test:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/conditional_test examples/conditional_test.cc -Iinclude -Llib -lrfus
+
+outcome_test:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/outcome_test examples/outcome_test.cc -Iinclude -Llib -lrfus
+
+event_test:
+	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/event_test examples/event_test.cc -Iinclude -Llib -lrfus
 
