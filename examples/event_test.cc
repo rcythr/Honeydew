@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
         cv.notify_all();
     });
 
+    char val[] = {'D', 'O', 'G', 'G', 'Y', '\0'};
 
-    char* val = "Doggy!";
     event_system.post_event(35, val);
 
     while(!complete)
