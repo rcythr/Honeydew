@@ -291,9 +291,18 @@
 </ul><h1>
 <a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation Instructions</h1>
 
-<p>On <strong>linux</strong> or <strong>mingw</strong> simply type <strong>make</strong>. The static library will be in the <strong>./lib</strong> directory and all the necessary includes will be in <strong>./include</strong>.</p>
+<p>To simply build the library and include directories into a build folder, from command line:</p>
 
-<p>Windows systems are supported, but project files are not supplied. Users will need to create these manually. Simply use your compiler to build the <strong>.cc</strong> files into a static library. From there use the <strong>rfus.h</strong>, <strong>rfus_type.h</strong>, <strong>task.h</strong>, <strong>join_semaphore.h</strong>, and <strong>pipeline.h</strong> files as includes.</p>
+<pre><code>mkdir build
+cd build
+cmake ..
+make
+make install
+</code></pre>
+
+<p>The library will be in [PROJECT ROOT]/build/lib
+The includes will be in [PROJECT ROOT]/build/include/
+The test executables will bein [PROJECT ROOT]/build/bin</p>
 
 <h1>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
