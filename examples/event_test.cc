@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     bool complete = false;
     
     // It is always necessary to create a RFUS when using this library.
-    //
+    //   however it need not be placed into the RFUS global variable.
     // In this case a ROUND_ROBIN rfus is created with 2 workers which grab
     //   events one at a time.
     RFUS = createRFUS(ROUND_ROBIN, 2, 1);
