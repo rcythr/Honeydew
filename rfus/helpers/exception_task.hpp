@@ -87,8 +87,6 @@ public:
         std::function<void()>& functor_copy = functor;
         RFUSInterface*& rfus_copy = rfus;                
         std::function<void(ExceptionType&)>& handler_copy = handler;
-        size_t& worker_copy = worker;
-        uint64_t& priority_copy = priority;
 
         if(handler)
         {

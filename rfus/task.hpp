@@ -11,7 +11,7 @@ namespace rfus
 {
 
 /// Forward Declarations
-struct join_semaphore_t;
+class join_semaphore_t;
 
 /**
 * Structure used in the actual RFUS implementation.
