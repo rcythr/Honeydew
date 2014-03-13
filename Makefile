@@ -22,9 +22,10 @@ library: clean
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -c rfus.cc -o obj/rfus.o
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -c task.cc -o obj/task.o
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -c helpers/task_wrapper.cc -o obj/task_wrapper.o -I.
+	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -c helpers/post_and_wait.cc -o obj/post_and_wait.o -I.
 	
 	#Construct the archive.
-	ar rvs lib/librfus.a obj/rfus.o obj/task.o obj/task_wrapper.o
+	ar rvs lib/librfus.a obj/rfus.o obj/task.o obj/task_wrapper.o obj/post_and_wait.o
 	
 	#Copy necessary include files over to include
 	cp rfus.hpp include/rfus.hpp
