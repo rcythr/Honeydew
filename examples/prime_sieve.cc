@@ -10,12 +10,11 @@
 
 #include "rfus.hpp"
 #include "helpers/task_wrapper.hpp"
+#include "helpers/post_and_wait.hpp"
 
 #include <iostream>
 #include <thread>
 #include <atomic>
-#include <mutex>
-#include <condition_variable>
 
 using namespace rfus;
 
@@ -24,10 +23,6 @@ using namespace rfus;
 */
 int main(int argc, char* argv[])
 {
-    std::mutex mut;
-    std::condition_variable cv;
-    bool complete = false;
-
     printf("Maximum Number: ");
 
     // Construct a sieve of the proper size
@@ -68,22 +63,10 @@ int main(int argc, char* argv[])
             if(val != 0)
                 printf("%lu ", val);
         }
-
-        // Notify main thread.
-        {
-            std::unique_lock<std::mutex> lg(mut);
-            complete = true;
-        }
-        cv.notify_all();
     });
 
     // Post to the RFUS.
-    RFUS->post(task);
-
-    // Wait for completion
-    std::unique_lock<std::mutex> lg(mut);
-    while(!complete)
-        cv.wait(lg);
+    post_and_wait(RFUS, task);
 
     return 0;
 }

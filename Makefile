@@ -40,6 +40,7 @@ library: clean
 	cp helpers/outcome_task.hpp include/helpers/outcome_task.hpp
 	cp helpers/exception_task.hpp include/helpers/exception_task.hpp
 	cp helpers/event_processor.hpp include/helpers/event_processor.hpp
+	cp helpers/post_and_wait.hpp include/helpers/post_and_wait.hpp
 
 tests: round_robin round_robin_priority least_busy least_busy_priority pipeline_test exception_test conditional_test outcome_test event_test prime_sieve
 

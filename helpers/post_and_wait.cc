@@ -4,9 +4,7 @@
 #include <mutex>
 #include <condition_variable>
 
-using namespace rfus;
-
-void post_and_wait(RFUSInterface* rfus, Task&& task)
+void rfus::post_and_wait(RFUSInterface* rfus, Task& task)
 {
     std::mutex mut;
     std::condition_variable cv;

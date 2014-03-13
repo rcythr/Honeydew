@@ -9,31 +9,21 @@
 
 #include "rfus.hpp"
 #include "helpers/task_wrapper.hpp"
+#include "helpers/post_and_wait.hpp"
 
 #include <iostream>
 #include <thread>
-#include <mutex>
-#include <chrono>
-#include <condition_variable>
 
 using namespace rfus;
 
 int main(int argc, char* argv[])
 {
-    // These variables are used to control the flow of the main thread
-    //   as the event system processes the events. It is not always necessary.
-    std::mutex return_mut;
-    std::condition_variable cv;
-    
     // It is always necessary to create a RFUS when using this library.
     //   however it need not be placed into the RFUS global variable.
     // In this case a ROUND_ROBIN_WITH_PRIORITY rfus is created with 2 workers which grab
     //   events one at a time.
     RFUS = createRFUS(ROUND_ROBIN_WITH_PRIORITY, 2, 1);
     
-    std::unique_lock<std::mutex> lg(return_mut);
-    bool complete = false;
-
     /*
     * Posts tasks A-F first onto queues in a round robin fashion.
     *   After these tasks are completed Task G will be pushed onto
@@ -44,7 +34,7 @@ int main(int argc, char* argv[])
     *    [A-F in undefined order with A,C,E happning from thread 1, and B, D, F happening from thread 2.]
     *    G happening from thread 1.
     */
-    RFUS->post(Task([] () {
+    post_and_wait(RFUS, Task([] () {
         std::cout << std::this_thread::get_id() << " A" << std::endl;
     }, 0, 5).also([] () {
         std::cout << std::this_thread::get_id() << " B" << std::endl;
@@ -58,17 +48,7 @@ int main(int argc, char* argv[])
         std::cout << std::this_thread::get_id() << " F" << std::endl;
     }, 0, 0).then([&] () {
         std::cout << std::this_thread::get_id() << " G" << std::endl;
-
-        // Notify the main thread to continue
-        {
-            std::unique_lock<std::mutex> lg(return_mut);
-            complete = true;
-        }
-        cv.notify_all();
     }));
 
-    // Wait for completion signal from last task.
-    while(!complete)
-        cv.wait(lg);
-
+    return 0;
 }
