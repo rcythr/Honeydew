@@ -40,7 +40,7 @@ library: clean
 	cp helpers/exception_task.hpp include/helpers/exception_task.hpp
 	cp helpers/event_processor.hpp include/helpers/event_processor.hpp
 
-tests: round_robin round_robin_priority least_busy least_busy_priority pipeline_test exception_test conditional_test outcome_test event_test
+tests: round_robin round_robin_priority least_busy least_busy_priority pipeline_test exception_test conditional_test outcome_test event_test prime_sieve
 
 round_robin:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/round_robin examples/round_robin.cc -Iinclude -Llib -lrfus
@@ -69,3 +69,5 @@ outcome_test:
 event_test:
 	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/event_test examples/event_test.cc -Iinclude -Llib -lrfus
 
+prime_sieve:
+	g++ $(DEBUG) -std=c++11 -Wl,--no-as-needed -pthread -o bin/prime_sieve examples/prime_sieve.cc -Iinclude -Llib -lrfus
