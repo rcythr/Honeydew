@@ -54,9 +54,9 @@ struct Pipeline<void>
     * @arg worker the thread to run this action upon.
     * @arg deadline the priority of this task. This value is absolute.
     */ 
-    Pipeline<void> thenAbsolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<void> then_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.thenAbsolute(action, worker, deadline);
+        task.then_absolute(action, worker, deadline);
         return Pipeline<void>(std::move(task));
     }
     
@@ -80,9 +80,9 @@ struct Pipeline<void>
     * @arg worker the thread to run this task upon.
     * @arg deadline the priority of this task. This value is absolute. 
     */    
-    Pipeline<void> alsoAbsolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<void> also_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.alsoAbsolute(action, worker, deadline);
+        task.also_absolute(action, worker, deadline);
         return Pipeline<void>(std::move(task));
     }
     
@@ -108,9 +108,9 @@ struct Pipeline<void>
     * @arg deadline the priority of this task. This value is absolute. 
     */    
     template<typename ReturnValue>
-    Pipeline<void> forkAbsolute(std::function<ReturnValue()> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<void> fork_absolute(std::function<ReturnValue()> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.forkAbsolute([=] () { action(); }, worker, deadline);
+        task.fork_absolute([=] () { action(); }, worker, deadline);
         return Pipeline<void>(std::move(task));
     }
 
@@ -139,10 +139,10 @@ struct Pipeline<void>
     * @arg deadline the priority of this task. This value is absolute.
     */ 
     template<typename ReturnType>
-    Pipeline<ReturnType> thenAbolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<ReturnType> then_abolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
         ReturnType* result = new ReturnType();
-        task.then(worker, [=] () { *result = action(); }, deadline);
+        task.then_absolute(worker, [=] () { *result = action(); }, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
     }
 
@@ -169,10 +169,10 @@ struct Pipeline<void>
     * @arg deadline the priority of this task. This value is absolute. 
     */    
     template<typename ReturnType>
-    Pipeline<ReturnType> alsoAbsolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<ReturnType> also_absolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
         ReturnType* result = new ReturnType();
-        task.alsoAbsolute([=] () { *result = action(); }, worker, deadline);
+        task.also_absolute([=] () { *result = action(); }, worker, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
     }
 
@@ -184,7 +184,7 @@ struct Pipeline<void>
     * @return a task_t* object for a RFUS. 
     */
     template<typename ReturnType>
-    task_t* closeWith(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
+    task_t* close_with(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
         task.then([=] () { action(); }, worker, deadline);
         return task.close();
@@ -198,9 +198,9 @@ struct Pipeline<void>
     * @return a task_t* object for a RFUS. 
     */
     template<typename ReturnType>
-    task_t* closeWithAbsolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
+    task_t* close_with_absolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
-        task.thenAbsolute([=] () { action(); }, worker, deadline);
+        task.then_absolute([=] () { action(); }, worker, deadline);
         return task.close();
     }
     
@@ -266,13 +266,13 @@ struct ForkedPipeline
     * @arg deadline the priority of this task. This value is absolute.
     */
     template<typename ReturnValue>
-    ForkedPipeline<ForkReturn> alsoAbsolute(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
+    ForkedPipeline<ForkReturn> also_absolute(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& join_sem_ref = join_sem;
         auto& prev_return_ref = prev_return;
 
         join_sem->increment();
-        task.alsoAbsolute([=] () { 
+        task.also_absolute([=] () { 
             action(*prev_return_ref);
             if(join_sem_ref->decrement() == 0)
             {
@@ -316,13 +316,13 @@ struct ForkedPipeline
     * @arg deadline the priority of this task. This value is absolute.
     */
     template<typename ReturnValue>
-    ForkedPipeline<ForkReturn> forkAbsolute(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
+    ForkedPipeline<ForkReturn> fork_absolute(std::function<ReturnValue(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& join_sem_ref = join_sem;
         auto& prev_return_ref = prev_return;
 
         join_sem->increment();
-        task.forkAbsolute([=] () {
+        task.fork_absolute([=] () {
             action(*prev_return_ref);
             if(join_sem_ref->decrement() == 0)
             {
@@ -364,13 +364,13 @@ struct ForkedPipeline
     * @arg worker the thread to run this task upon.
     * @arg deadline the priority of this task. This value is absolute.
     */
-    Pipeline<void> joinAbsolute(std::function<void(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<void> join_absolute(std::function<void(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& join_sem_ref = join_sem;
         auto& prev_return_ref = prev_return;
 
         join_sem->increment();
-        task.alsoAbsolute([=] () { 
+        task.also_absolute([=] () { 
             action(*prev_return_ref);
             if(join_sem_ref->decrement() == 0)
             {
@@ -415,14 +415,14 @@ struct ForkedPipeline
     * @arg deadline the priority of this task. This value is absolute.
     */
     template<typename ReturnType>
-    Pipeline<ReturnType> joinAbsolute(std::function<ReturnType(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<ReturnType> join_absolute(std::function<ReturnType(ForkReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         ReturnType* result = new ReturnType();
         auto& join_sem_ref = join_sem;
         auto& prev_return_ref = prev_return;
 
         join_sem->increment();
-        task.alsoAbsolute([=] () { 
+        task.also_absolute([=] () { 
             *result = action(*prev_return_ref);
             if(join_sem_ref->decrement() == 0)
             {
@@ -483,10 +483,10 @@ struct Pipeline
     * @arg worker the thread to run this action upon.
     * @arg deadline the priority of this task. This value is absolute.
     */ 
-    Pipeline<void> thenAbsolute(std::function<void(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<void> then_absolute(std::function<void(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& prev_result_ref = prev_result;
-        task.thenAbsolute([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
+        task.then_absolute([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return Pipeline<void>(std::move(task));
     }
 
@@ -516,11 +516,11 @@ struct Pipeline
     * @arg deadline the priority of this task. This value is absolute.
     */ 
     template<typename ReturnType>
-    Pipeline<ReturnType> thenAbolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
+    Pipeline<ReturnType> then_absolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& prev_result_ref = prev_result;
         ReturnType* result = new ReturnType();
-        task.then(worker, [=] () { *result = action(*prev_result_ref); delete prev_result_ref; }, deadline);
+        task.then_absolute(worker, [=] () { *result = action(*prev_result_ref); delete prev_result_ref; }, deadline);
         return Pipeline<ReturnType>(std::move(task), result);
     }
 
@@ -532,7 +532,7 @@ struct Pipeline
     * @return a task_t* object for a RFUS. 
     */
     template<typename ReturnType>
-    task_t* closeWith(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
+    task_t* close_with(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& prev_result_ref = prev_result;
         task.then([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
@@ -547,10 +547,10 @@ struct Pipeline
     * @return a task_t* object for a RFUS. 
     */
     template<typename ReturnType>
-    task_t* closeWithAbsolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
+    task_t* close_with_absolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& prev_result_ref = prev_result;
-        task.thenAbsolute([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
+        task.then_absolute([=] () { action(*prev_result_ref); delete prev_result_ref; }, worker, deadline);
         return task.close();
     }
     
@@ -585,11 +585,11 @@ struct Pipeline
     * @return A forked pipeline object. This is used to daisy chain calls.
     */
     template<typename ReturnType>
-    ForkedPipeline<ReturnType> splitAbsolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
+    ForkedPipeline<ReturnType> split_absolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
     {
         auto& prev_result_ref = prev_result;
         join_semaphore_t* join_sem = new join_semaphore_t(1);
-        task.thenAbsolute([=] () { 
+        task.then_absolute([=] () { 
             action(*prev_result_ref);
             if(join_sem->decrement() == 0)
             {
@@ -642,7 +642,7 @@ struct Pipeline
     * @return A forked pipeline. Used to daisy chain calls.
     */
     template<typename ReturnType>
-    static detail::ForkedPipeline<ReturnType> startFork(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
+    static detail::ForkedPipeline<ReturnType> start_forked(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
     {
         join_semaphore_t* join_sem = new join_semaphore_t(1);
         ReturnType* result = new ReturnType();

@@ -75,7 +75,7 @@ public:
     * @arg worker the associated worker for this task to run on. Worker=0 means any worker.
     * @arg deadline the priority of the task (absolute, not added to previous task's deadline).
     */
-    Task& thenAbsolute(std::function<void()> action, size_t worker=0,  uint64_t deadline=0);
+    Task& then_absolute(std::function<void()> action, size_t worker=0,  uint64_t deadline=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
@@ -93,7 +93,7 @@ public:
     * @arg worker the associated worker thread. Worker=0 means any worker.
     * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
     */
-    Task& alsoAbsolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& also_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
@@ -111,7 +111,7 @@ public:
     * @arg worker the associated worker thread. Worker=0 means any worker.
     * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
     */
-    Task& forkAbsolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& fork_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
     * Returns the associated task_t* of this object and then !empties this object!

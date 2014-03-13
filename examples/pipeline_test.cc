@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     }).then<char>([] (int val) { 
         printf("%d\n", val); 
         return 'a'; 
-    }).closeWith<bool>([&] (char val) { 
+    }).close_with<bool>([&] (char val) { 
         printf("%c\n", val); 
 
         // Notify main thread to continue

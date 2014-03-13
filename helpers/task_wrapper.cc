@@ -58,16 +58,10 @@ Task::~Task()
 
 Task& Task::then(std::function<void()> action, size_t worker, uint64_t deadline)
 {
-    leaf = leaf->continuation = new task_t(action, worker, leaf->priority + deadline);
-    while(or_root != nullptr)
-    {
-        or_root->continuation = leaf;
-        or_root = or_root->next;
-    }
-    return *this;
+    return then_absolute(std::move(action), worker, leaf->priority + deadline);
 }
 
-Task& Task::thenAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
+Task& Task::then_absolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     leaf = leaf->continuation = new task_t(action, worker, deadline);
     while(or_root != nullptr)
@@ -80,23 +74,10 @@ Task& Task::thenAbsolute(std::function<void()> action, size_t worker, uint64_t d
 
 Task& Task::also(std::function<void()> action, size_t worker, uint64_t deadline)
 {
-    join_semaphore_t* join;
-    if(leaf->join == nullptr)
-    {
-        or_root = leaf;
-        join = leaf->join = new join_semaphore_t(2);
-    }
-    else
-    {
-        join = leaf->join;
-        join->increment();
-    }
-    leaf = leaf->next = new task_t(action, worker, leaf->priority + deadline);
-    leaf->join = join;
-    return *this;
+    return also_absolute(std::move(action), worker, leaf->priority + deadline);
 }
 
-Task& Task::alsoAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
+Task& Task::also_absolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     join_semaphore_t* join;
     if(leaf->join == nullptr)
@@ -116,15 +97,12 @@ Task& Task::alsoAbsolute(std::function<void()> action, size_t worker, uint64_t d
 
 Task& Task::fork(std::function<void()> action, size_t worker, uint64_t deadline)
 {
-    task_t* task = new task_t(action, worker, deadline);
-    task->next = leaf->next;
-    leaf->next = task;
-    return *this;
+    return fork_absolute(std::move(action), worker, leaf->priority + deadline);
 }
 
-Task& Task::forkAbsolute(std::function<void()> action, size_t worker, uint64_t deadline)
+Task& Task::fork_absolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
-    task_t* task = new task_t(action, worker, leaf->priority + deadline);
+    task_t* task = new task_t(action, worker, deadline);
     task->next = leaf->next;
     leaf->next = task;
     return *this;
