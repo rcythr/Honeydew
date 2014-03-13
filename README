@@ -202,6 +202,7 @@ Other than taking care to use **split** and **join** correctly the usage of the 
 # Dependencies:
 
 * **C++11 Standard Compliant Compiler** (Clang 3.1, GCC 4.8, Etc). Older versions than the above *may* work depending on compliance.
+* **CMake 2.8** (for building from source)
 
 # Installation Instructions
 
