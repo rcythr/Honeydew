@@ -1,6 +1,6 @@
 
-#include "rfus.hpp"
-#include "helpers/task_wrapper.hpp"
+#include <rfus/rfus.hpp>
+#include <rfus/helpers/task_wrapper.hpp>
 
 namespace rfus
 {

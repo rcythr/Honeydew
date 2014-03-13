@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "task.hpp"
-#include "rfus_type.hpp"
+#include <rfus/task.hpp>
+#include <rfus/rfus_type.hpp>
 
 namespace rfus {
 

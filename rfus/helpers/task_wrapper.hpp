@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "task.hpp"
+#include <rfus/task.hpp>
 
 namespace rfus
 {
