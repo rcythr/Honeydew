@@ -15,6 +15,7 @@ library: clean
 	mkdir lib
 	mkdir include
 	mkdir include/helpers
+	mkdir include/detail
 	mkdir bin
 	
 	# Compile everything into obj
@@ -29,7 +30,7 @@ library: clean
 	cp rfus.hpp include/rfus.hpp
 	cp rfus_type.hpp include/rfus_type.hpp
 	cp task.hpp include/task.hpp
-	cp join_semaphore.hpp include/join_semaphore.hpp
+	cp detail/join_semaphore.hpp include/detail/join_semaphore.hpp
 	
 	#Copy over necessary helper includes
 	cp helpers/pipeline.hpp include/helpers/pipeline.hpp

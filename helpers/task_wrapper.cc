@@ -1,6 +1,6 @@
 
 #include "helpers/task_wrapper.hpp"
-#include "join_semaphore.hpp"
+#include "detail/join_semaphore.hpp"
 
 using namespace rfus;
 

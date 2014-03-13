@@ -3,10 +3,10 @@
 
 #include "rfus.hpp"
 
-#include "queue.hpp"
-#include "priority_queue.hpp"
-#include "counting_wrapper.hpp"
-#include "join_semaphore.hpp"
+#include "detail/queue.hpp"
+#include "detail/priority_queue.hpp"
+#include "detail/counting_wrapper.hpp"
+#include "detail/join_semaphore.hpp"
 
 #include <thread>
 #include <vector>

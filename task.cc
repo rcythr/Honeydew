@@ -2,7 +2,7 @@
 // RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #include "task.hpp"
-#include "join_semaphore.hpp"
+#include "detail/join_semaphore.hpp"
 
 using namespace rfus;
 

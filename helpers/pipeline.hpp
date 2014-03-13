@@ -4,7 +4,7 @@
 #pragma once
 
 #include "helpers/task_wrapper.hpp"
-#include "join_semaphore.hpp"
+#include "detail/join_semaphore.hpp"
 
 #include <utility>
 #include <type_traits>
