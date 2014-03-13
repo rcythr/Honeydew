@@ -35,8 +35,6 @@ public:
         , worker(worker)
         , priority(priority)
         , handler(nullptr)
-        , handler_worker(0)
-        , handler_priority(0)
     {
     }
 
@@ -65,17 +63,13 @@ public:
 
     /**
     * Specifies the Task to post if this task throws an ExceptionType exception.
-    *   exception will be passed into the given handler. 
+    *   exception will be passed into the given handler on the same thread as the throwing task. 
     * @arg handler the function used to handle the exception.
-    * @arg handler_worker the worker for the handler task.
-    * @arg handler_priority the priority of the handler task.
     * @return reference to this for daisy chains
     */
-    ExceptionTask& on_failure(std::function<void(ExceptionType&)> handler, size_t handler_worker=0, uint64_t handler_priority=0)
+    ExceptionTask& on_failure(std::function<void(ExceptionType&)> handler)
     {
         this->handler = handler;
-        this->handler_worker = handler_worker;
-        this->handler_priority = handler_priority;
         return *this;
     }
 
@@ -106,7 +100,7 @@ public:
                 }
                 catch(ExceptionType e)
                 {
-                    rfus_copy->post(Task(std::bind(handler_copy, e), worker_copy, priority_copy));
+                    handler_copy(e);
                     delete success_task;
                 }
             }, worker, priority).close();
@@ -138,8 +132,6 @@ private:
     Task on_success_task;
     Task on_failure_task;
     std::function<void(ExceptionType&)> handler;
-    size_t handler_worker;
-    uint64_t handler_priority;
 };
 
 }

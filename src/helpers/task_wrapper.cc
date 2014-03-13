@@ -8,8 +8,8 @@ using namespace rfus;
 
 Task::Task()
     : root(nullptr)
-    , leaf(nullptr)
     , or_root(nullptr)
+    , leaf(nullptr)
 {
 }
 

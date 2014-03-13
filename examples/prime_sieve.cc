@@ -27,7 +27,9 @@ int main(int argc, char* argv[])
 
     // Construct a sieve of the proper size
     std::string buf;
-    size_t sieve_size = (std::getline(std::cin, buf), std::stoi(buf));
+    std::getline(std::cin, buf);
+
+    size_t sieve_size = std::stoi(buf);
     std::atomic<size_t>* sieve = new std::atomic<size_t>[sieve_size-2];
 
     printf("Constructing sieve of elements up to %lu...\n", sieve_size);
