@@ -39,7 +39,7 @@ public:
     }
 
     /**
-    * Binds an event into this dispatch which involves 2 steps:
+    * Binds an event into this dispatch which involves 3 steps:
     *  1. Casting of the input event to CastType*
     *  2. Construction of an EventDataType object from the CastType*.
     *  3. Dispatch of the EventDataType& to a given handler function.
