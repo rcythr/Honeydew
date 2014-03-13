@@ -224,5 +224,6 @@ Documentation may be found in the associated **.hpp** files and in code.
 
 # Changelog
 
-+ **1.0.1** - Pipeline implementation.
-+ **1.0.0** - Basic implementation is complete with continuations and joins.
++ **0.8.2** - Event System Helpers. CMake. Lots of stuff.
++ **0.6.0** - Pipeline implementation.
++ **0.5.0** - Basic implementation is complete with continuations and joins.
