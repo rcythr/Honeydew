@@ -24,7 +24,10 @@ struct RFUSImpl : public RFUSInterface
     typedef std::function<size_t(std::atomic_int_fast32_t&,task_t*,QueueType*,size_t)> FindQueueFunc;
 
     RFUSImpl(size_t num_threads, size_t step_size, FindQueueFunc findQueue)
-        : findQueue(findQueue)
+        : exception_handler(nullptr)
+        , exception_worker(0)
+        , exception_priority(0)
+        , findQueue(findQueue)
         , num_threads(num_threads)
         , runningCount(0)
     {
@@ -50,7 +53,11 @@ struct RFUSImpl : public RFUSInterface
                 }
                 catch(...)
                 {
-                    // Do nothing
+                    if(exception_handler != nullptr)
+                    {
+                        std::exception_ptr e = std::current_exception();
+                        post(new task_t([=]() {exception_handler(e);}, exception_worker, exception_priority));
+                    }
                 }
 
                 if(task->join != nullptr)
@@ -106,6 +113,18 @@ struct RFUSImpl : public RFUSInterface
         return this;
     }
 
+    RFUSInterface* set_exception_handler(std::function<void(std::exception_ptr)> handler, size_t worker=0, uint64_t priority=0) 
+    {
+        exception_handler = handler;
+        exception_worker = worker;
+        exception_priority = priority;
+        return this;
+    }
+
+    std::function<void(std::exception_ptr)> exception_handler;
+    size_t exception_worker;
+    uint64_t exception_priority;
+ 
     std::vector<std::thread> threads;
     FindQueueFunc findQueue;
     QueueType* queues;

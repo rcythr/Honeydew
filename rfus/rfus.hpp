@@ -18,6 +18,8 @@ struct RFUSInterface
 
     /**
     * Schedules the given task's task_t* sub-object
+    * This function is thread safe.
+    * 
     * @param t the task to schedule.
     */
     template<typename TaskType>
@@ -29,9 +31,21 @@ struct RFUSInterface
 
     /**
     * Schedules a properly built task_t* object directly.
+    * This function is thread safe.
+    *
     * @param t the task_t* to schedule.
     */
     virtual RFUSInterface* post(task_t* t) = 0;
+
+    /**
+    * Sets a function to be posted when an exception is caught by the RFUS.
+    * This function is not thread safe.
+    *
+    * @arg handler the function to post.
+    * @arg worker the worker which should handle the exception.
+    * @arg priority the priority of the worker handling the exception.
+    */
+    virtual RFUSInterface* set_exception_handler(std::function<void(std::exception_ptr)> handler, size_t worker=0, uint64_t priority=0) = 0; 
 };
 
 /**
