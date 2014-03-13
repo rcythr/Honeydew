@@ -7,6 +7,8 @@ using namespace rfus;
 
 struct MockEventType
 {
+    typedef const char cast_type;
+
     MockEventType(const char* val)
         : name(val)
     {
@@ -27,7 +29,7 @@ int main(int argc, char* argv[])
     
     std::unique_lock<std::mutex> lg(mut);
 
-    event_system.bind_constructable<const char, MockEventType>(35, 
+    event_system.bind_constructable<MockEventType>(35, 
     [&](MockEventType& event)  {    
         printf("%s\n", event.name.c_str());
         {

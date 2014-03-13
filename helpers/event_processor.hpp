@@ -55,7 +55,7 @@ public:
     * @arg construction_priority the priority of the construction task.
     * @return a reference to this object for daisy chains
     */
-    template<typename CastType, typename EventDataType>
+    template<typename EventDataType, typename CastType=typename EventDataType::cast_type>
     EventProcessor& bind_constructable(KeyType key_value, std::function<void(EventDataType&)> handler, 
                                        size_t handler_worker=0, uint64_t handler_priority=0,
                                        size_t construction_worker=0, uint64_t construction_priority=0) 
