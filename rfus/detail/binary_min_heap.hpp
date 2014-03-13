@@ -76,7 +76,7 @@ public:
         size_t gathered = 0;
         *output = nullptr;
         T* output_end = nullptr;
-        while(gathered < step && size != 0)
+        while((step == 0 || gathered < step) && size != 0)
         {
             if(*output == nullptr)
             {
