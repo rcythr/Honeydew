@@ -2,6 +2,8 @@ Note: For a prettier version of this README please see the project page : http:/
 
 #General
 
+**Honeydew** is a project that is dedicated to providing powerful concurrency primitives with a clean interface. With **Honeydew** you can quickly model relationships between various tasks that are performed throughout your system. This allows you to stop worrying about how to coordinate events and start worrying about the implementation of your business logic.
+
 __Version:__ 0.8.2
 
 __Release date:__ 2014.03.10
@@ -10,33 +12,9 @@ __Project state:__ stable
 
 __Author:__ Richard W. Laughlin Jr. (@rcythr)
 
-***
+# Usage
 
-This library allows a user to schedule tasks to be run on a collection of worker threads in a concurrent fashion. First a **Honeydew** implementation must be created and stored in a pointer somewhere. The default is a singleton located in the Honeydew library.
-	
-In general, Worker-agnostic tasks can be scheduled on:
-
-1. The thread that completes the task. (**Worker Selection**)
-2. The order in which the worker completes his tasks. (**Task Priority**)
-
-However, Tasks which are tied to a particular worker thread can only be scheduled within the worker (**Task Priority**)
-
----------------------------------------------------------------------------------------------------
-Currently there are four **Honeydew** implementations:
-* __ROUND_ROBIN__
-    - Worker selection is **round robin**
-    - Tasks are strictly **FIFO**
-* __ROUND_ROBIN_WITH_PRIORITY__
-    - Worker selection is **round robin**
-    - Tasks are reordered to **priority**
-* __LEAST_BUSY__
-    - Worker selection is onto the **least busy** worker
-    - Tasks are strictly **FIFO**
-* __LEAST_BUSY_WITH_PRIORITY__
-    - Worker selection is onto the **least busy** worker
-    - Tasks are reordered to **priority**
-
-Each has benefits and drawbacks which are discussed in the **honeydew_type.hpp** file. The choice of implementation depends largely on the type of tasks you're processing and the rate at which they come in.
+See the project wiki for information regarding usage.
 
 # Dependencies:
 
@@ -54,8 +32,10 @@ To simply build the library and include directories into a build folder, from co
     make install
 
 The library will be in [PROJECT ROOT]/build/lib
+
 The includes will be in [PROJECT ROOT]/build/include/
-The test executables will bein [PROJECT ROOT]/build/bin
+
+The test executables will be in [PROJECT ROOT]/build/bin
 
 # Documentation
 
