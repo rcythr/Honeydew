@@ -4,11 +4,11 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="RFUS : Rich&#39;s Fast Userspace Scheduling." />
+    <meta name="description" content="Honeydew : Fast Userspace Scheduling" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>RFUS</title>
+    <title>Honeydew</title>
   </head>
 
   <body>
@@ -16,14 +16,14 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/rcythr/RFUS">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/rcythr/Honeydew">View on GitHub</a>
 
-          <h1 id="project_title">RFUS</h1>
-          <h2 id="project_tagline">Rich&#39;s Fast Userspace Scheduling.</h2>
+          <h1 id="project_title">Honeydew</h1>
+          <h2 id="project_tagline">Fast Userspace Scheduling</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/rcythr/RFUS/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/rcythr/RFUS/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/rcythr/Honeydew/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rcythr/Honeydew/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -34,6 +34,8 @@
         <h1>
 <a name="general" class="anchor" href="#general"><span class="octicon octicon-link"></span></a>General</h1>
 
+<p><strong>Honeydew</strong> is a project that is dedicated to providing powerful concurrency primitives with a clean interface. With <strong>Honeydew</strong> you can quickly model relationships between various tasks that are performed throughout your system. This allows you to stop worrying about how to coordinate events and start worrying about the implementation of your business logic.</p>
+
 <p><strong>Version:</strong> 0.8.2</p>
 
 <p><strong>Release date:</strong> 2014.03.10</p>
@@ -42,245 +44,10 @@
 
 <p><strong>Author:</strong> Richard W. Laughlin Jr. (<a href="https://github.com/rcythr" class="user-mention">@rcythr</a>)</p>
 
-<hr><p>This library allows a user to schedule tasks to be run on a collection of worker threads in a concurrent fashion. First a <strong>RFUS</strong> implementation must be created and stored in a pointer somewhere. The default is a singleton located in the rfus library.</p>
-
-<p>In general, Worker-agnostic tasks can be scheduled on:</p>
-
-<ol>
-<li>The thread that completes the task. (<strong>Worker Selection</strong>)</li>
-<li>The order in which the worker completes his tasks. (<strong>Task Priority</strong>)</li>
-</ol><p>However, Tasks which are tied to a particular worker thread can only be scheduled within the worker (<strong>Task Priority</strong>)</p>
-
-<hr><p>Currently there are four <strong>RFUS</strong> implementations:</p>
-
-<ul>
-<li>
-<strong>ROUND_ROBIN</strong>
-
-<ul>
-<li>Worker selection is <strong>round robin</strong>
-</li>
-<li>Tasks are strictly <strong>FIFO</strong>
-</li>
-</ul>
-</li>
-<li>
-<strong>ROUND_ROBIN_WITH_PRIORITY</strong>
-
-<ul>
-<li>Worker selection is <strong>round robin</strong>
-</li>
-<li>Tasks are reordered to <strong>priority</strong>
-</li>
-</ul>
-</li>
-<li>
-<strong>LEAST_BUSY</strong>
-
-<ul>
-<li>Worker selection is onto the <strong>least busy</strong> worker</li>
-<li>Tasks are strictly <strong>FIFO</strong>
-</li>
-</ul>
-</li>
-<li>
-<strong>LEAST_BUSY_WITH_PRIORITY</strong>
-
-<ul>
-<li>Worker selection is onto the <strong>least busy</strong> worker</li>
-<li>Tasks are reordered to <strong>priority</strong>
-</li>
-</ul>
-</li>
-</ul><p>Each has benefits and drawbacks which are discussed in the <strong>rfus_type.hpp</strong> file. The choice of implementation depends largely on the type of tasks you're processing and the rate at which they come in.</p>
-
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
-<p>The code below creates a <strong>RFUS</strong> and stores it into the global <strong>RFUS</strong> variable.  The <strong>RFUS</strong> will schedule worker-agnostic threads in a <strong>round robin</strong> fashion to the <strong>2</strong> available workers. The workers will grab tasks from the queues <strong>1</strong> at a time.</p>
-
-<pre><code>    RFUS = createRFUS(ROUND_ROBIN, 2, 1);
-</code></pre>
-
-<p>The code below creates a <strong>RFUS</strong> and stores it into a custom variable. The <strong>RFUS</strong> will schedule worker-agnostic threads into the <strong>least busy</strong> queue at that time for the <strong>5</strong> available workers. The workers will grab tasks from the queues <strong>2</strong> at a time. Additionally the tasks will be ordered in their queues based on their <strong>priority</strong> (lowest is highest).</p>
-
-<pre><code>    RFUSInterface* myRFUS = createRFUS(LEAST_BUSY_WITH_PRIORITY, 5, 2);
-</code></pre>
-
-<h2>
-<a name="function-specification" class="anchor" href="#function-specification"><span class="octicon octicon-link"></span></a>Function Specification</h2>
-
-<p>Once a <strong>RFUS</strong> has been created it is possible to schedule tasks onto it using the <strong>Task</strong> helper class. This class has a lot of functions which do similar, but different things. The order in which the arguments are supplied is helpful to understand the semantics.</p>
-
-<ul>
-<li>Functor to Task [Required]</li>
-<li>Worker ID [Optional]</li>
-<li>Priority/Deadline [Optional]</li>
-</ul><h2>
-<a name="then-relationships" class="anchor" href="#then-relationships"><span class="octicon octicon-link"></span></a>Then Relationships</h2>
-
-<p>Below two tasks (<strong>funcA</strong> and <strong>funcB</strong>) are created which will happen, in order, possibly on different threads. The use of colors in these diagrams designates different "rows" of tasks. Same color executes concurrently, different executes sequentially.</p>
-
-<p align="center">
-<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/then.png" alt="Then Relationship Diagram"></p>
-
-<pre><code>    RFUS-&gt;post(Task(funcA).then(funcB));
-</code></pre>
-
-<h2>
-<a name="also-relationships" class="anchor" href="#also-relationships"><span class="octicon octicon-link"></span></a>Also Relationships</h2>
-
-<p>Below two tasks (<strong>funcA</strong> and <strong>funcB</strong>) are created which may happen concurrently on two different threads. All following tasks will wait for the also to complete. Afterwards the following task (<strong>funcC</strong>) will be completed.</p>
-
-<p align="center">
-<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/also.png" alt="Also Relationship Diagram"></p>
-
-<pre><code>    RFUS-&gt;post(Task(funcA).also(funcB).then(funcC));
-</code></pre>
-
-<h2>
-<a name="fork-relationships" class="anchor" href="#fork-relationships"><span class="octicon octicon-link"></span></a>Fork Relationships</h2>
-
-<p>Below three tasks (<strong>funcA</strong>, <strong>funcB</strong>, and <strong>funcD</strong>) are created which may happen concurrently on three different threads. Next <strong>funcC</strong> is added after the join created by the <strong>also</strong> relationship. It is important to note that because <strong>funcD</strong> was added via <strong>fork</strong> it does not contribute to the join. Thus <strong>funcC</strong> can be executing while <strong>funcD</strong> is still executing, after, or even before. The same is true for <strong>funcE</strong> in regard to <strong>funcF</strong>. <strong>funcF</strong> will come strictly following <strong>funcC</strong>, but has no relationship with <strong>funcE</strong>.</p>
-
-<p align="center">
-<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/fork.png" alt="Fork Relationship Diagram"></p>
-
-<pre><code>    RFUS-&gt;post(Task(funcA).also(funcB).fork(funcD)
-               .then(funcC).fork(funcE)
-               .then(funcF));
-</code></pre>
-
-<h2>
-<a name="understanding-priority" class="anchor" href="#understanding-priority"><span class="octicon octicon-link"></span></a>Understanding Priority</h2>
-
-<p>It is also possible (and suggested for priority queues) to supply a priority to each task. <strong>RFUS</strong> is agnostic to the meaning of the priorities - you can define these however you wish.</p>
-
-<p>The code below will use some function <strong>currentTime()</strong> to get the current time (in ms, ns, s, ...). The first task will be prioritized to the <strong>currentTime()</strong> the second task will be prioritized to <strong>currentTime()+15</strong>. The third task will be prioritized to <strong>1500</strong>.</p>
-
-<p>Note: The meaning of the 0 parameter is explained in the next section.</p>
-
-<pre><code>    RFUS-&gt;post(Task([] () {
-        printf("I HAPPEN FIRST\n");
-    }, 0, currentTime()).then([] () {
-        printf("I HAPPEN SECOND\n");
-    }, 0, 15).thenAbsolute([] () {
-        printf("I HAPPEN THIRD\n");
-    }, 0, 1500);
-</code></pre>
-
-<h2>
-<a name="tieing-to-workers" class="anchor" href="#tieing-to-workers"><span class="octicon octicon-link"></span></a>Tieing to Workers</h2>
-
-<p>Finally it is possible to tie tasks to certain workers. This can be useful to avoid mutexes.</p>
-
-<p>In the code below <strong>funcA</strong> and <strong>funcB</strong> will not execute concurrently even though an <strong>also</strong> relationship is used. This is because the <strong>funcA</strong> and <strong>funcB</strong> share the same worker. By contrast, <strong>funcC</strong> may happen at the same time as either <strong>funcA</strong> or <strong>funcB</strong>. This is because it is tied to a totally different worker than the previous two tasks.</p>
-
-<p>Note: A worker value of 0 indicates that the task can be scheduled onto any thread.</p>
-
-<pre><code>    RFUS-&gt;post(Task(funcA, 1).also(funcB, 1).also(funcC, 2);
-</code></pre>
-
-<h2>
-<a name="pipelines" class="anchor" href="#pipelines"><span class="octicon octicon-link"></span></a>Pipelines</h2>
-
-<p><strong>Pipelines</strong> are a helper set of templates that add serious power to the tasking system described above. The <strong>Pipeline</strong> class does nothing that a user could not already do, but simply wraps it in a clean, no-nonsense interface. The following is the typical usage of a pipeline:</p>
-
-<pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
-        return 42;
-    }).then([] (int value) {
-        printf("%d\n", value);
-    }).close());
-</code></pre>
-
-<p>In the above code the first task is scheduled and returns a value of <strong>42</strong>. This value is stored on the heap and then passed into the second task. The second task does not return a value and thus can be closed. The <strong>close()</strong> function returns a <strong>task_t</strong> similar to the <strong>Task</strong> helper class. In fact, the <strong>Pipeline</strong> template uses the <strong>Task</strong> class internally.</p>
-
-<p>Pipelines support the same <strong>action</strong>, <strong>[worker]</strong>, <strong>[deadline]</strong> function arguments as the <strong>Task</strong> class. </p>
-
-<p>Ideally pipelines will always end with a function that returns <strong>void</strong>. However, in many cases this is not possible, so instead of adding a dummy function at the end of the pipeline, resources can be saved by using <strong>closeWith</strong> instead of <strong>then</strong>. For example:</p>
-
-<pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
-        return 42;
-    }).closeWith&lt;bool&gt;([] (int value) {
-        printf("%d\n", value);
-        return true;
-    }));
-</code></pre>
-
-<p>No resources will be allocated for the <strong>bool</strong> returned from the last function. This value will simply be discarded after it is returned. <strong>closeWith</strong> returns a <strong>task_t</strong> the same as <strong>close()</strong> does for tasks returning <strong>void</strong>.</p>
-
-<p>Pipelines can be tricky because there are three types of pipelines:</p>
-
-<ul>
-<li>
-<strong>Normal Pipeline</strong> (Takes a parameter)</li>
-<li>
-<strong>Void Pipeline</strong> (Does not take a parameter)</li>
-<li>
-<strong>Forked Pipeline</strong> (Takes Parameter, Parameter is shared)</li>
-</ul><p>When you are working with pipelines you do not need to specify which type of pipeline to create - this is done automatically. You simply need to be aware what operations are available to you based on the current pipeline.</p>
-
-<p>The <strong>Pipeline::start()</strong> function handles the first transition from a <strong>Void Pipeline</strong> to a <strong>Normal Pipeline</strong> for you automatically. Thus pipelines always start in the <strong>Normal Pipeline</strong>. The following image/table shows the effects of various member functions on the state of the pipeline:</p>
-
-<p align="center">
-<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/pipeline_state.png" alt="Pipeline Type State Diagram"></p>
-
-<h3>
-<a name="normal-pipeline" class="anchor" href="#normal-pipeline"><span class="octicon octicon-link"></span></a>Normal Pipeline</h3>
-
-<ul>
-<li>then w/ return val      -&gt; Normal Pipeline</li>
-<li>then w/o return val     -&gt; Void Pipeline</li>
-<li>split w/ return val     -&gt; Forked Pipeline</li>
-<li>split w/o return val    -&gt; Forked Pipeline</li>
-</ul><h3>
-<a name="void-pipeline" class="anchor" href="#void-pipeline"><span class="octicon octicon-link"></span></a>Void Pipeline</h3>
-
-<ul>
-<li>then w/ return val      -&gt; Normal Pipeline</li>
-<li>then w/o return val     -&gt; Void Pipeline</li>
-<li>also w/ return val      -&gt; Normal Pipeline</li>
-<li>also w/o retrun val     -&gt; Void Pipeline</li>
-<li>fork w/ return val      -&gt; Void Pipeline</li>
-<li>fork w/o return val     -&gt; Void Pipeline</li>
-</ul><h3>
-<a name="forked-pipeline" class="anchor" href="#forked-pipeline"><span class="octicon octicon-link"></span></a>Forked Pipeline</h3>
-
-<ul>
-<li>also w/ return val      -&gt; Forked Pipeline</li>
-<li>also w/o return val     -&gt; Forked Pipeline</li>
-<li>join w/ return val      -&gt; Normal Pipeline</li>
-<li>join w/o return val     -&gt; Void Pipeline</li>
-<li>fork w/ return val      -&gt; Forked Pipeline</li>
-<li>fork w/o return val     -&gt; Forked Pipeline</li>
-</ul><p><strong>Void Pipelines</strong> and <strong>Forked Pipelines</strong> support the <strong>fork</strong> operation. This operation simply spins off another task that takes the result of the previous operation (if any). No tasks will wait for this task to complete. It is completely independent.</p>
-
-<p><strong>Normal Pipelines</strong> and <strong>Void Pipelines</strong> support the <strong>then</strong> operation. The <strong>then</strong> operation will complete the given task after the last tasks have completed (exclusing <strong>fork</strong>). If you only use the <strong>then</strong> operation you will never find yourself in the <strong>Forked Pipeline</strong>.</p>
-
-<p>If you use the <strong>split</strong> function in the <strong>Normal Pipeline</strong> you will find yourself in the <strong>Forked Pipeline</strong>. The return value before the <strong>split</strong> will be passed into all subsequent calls up to and including the <strong>join</strong> call that leaves the <strong>Forked Pipeline</strong>. Thus the <strong>split</strong> is equivalent to a <strong>then</strong> that can share the return value from before it with subsequent calls. All return values in the <strong>Forked Pipeline</strong> are ignored except for the final <strong>join</strong> call that leaves the <strong>Forked Pipeline</strong>. The example below illustrates the semantics of <strong>Pipelines</strong>.</p>
-
-<p align="center">
-<img src="https://raw.github.com/rcythr/RFUS/gh-pages/images/pipeline_example.png" alt="Pipeline Example Diagram"></p>
-
-<pre><code>    RFUS-&gt;post(Pipeline::start&lt;int&gt;([] () {
-        return 42;
-    }).split&lt;int&gt;([] (int val) { // In: 42, Out: 45.
-        return val+3;
-    }).also&lt;void&gt;([] (int val) { // In 42
-        printf("%d\n", val);
-    }).also&lt;int&gt;([] (int val) {  // In 42, Out 45 (discarded)
-        return val+3;
-    }).join&lt;int&gt;([] (int val) {  // In 42, Out 46
-        printf("%d\n", val);
-        return val+4;
-    }).then([] (int val) {      // In 46
-        printf("%d\n", val);
-    }).close()); 
-</code></pre>
-
-<p>The above <strong>split</strong>, <strong>also</strong>, <strong>also</strong> (w/ return), and <strong>join</strong> calls all happen concurrently. If the pipeline were a <strong>Task</strong> class the <strong>split</strong> would be a <strong>then</strong> and the rest would be <strong>also</strong> calls. </p>
-
-<p>Other than taking care to use <strong>split</strong> and <strong>join</strong> correctly the usage of the pipeline system should be fairly straightforward.</p>
+<p>See the project wiki for information regarding usage.</p>
 
 <h1>
 <a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies:</h1>
@@ -304,7 +71,7 @@ make install
 
 <p>The library will be in [PROJECT ROOT]/build/lib
 The includes will be in [PROJECT ROOT]/build/include/
-The test executables will bein [PROJECT ROOT]/build/bin</p>
+The test executables will be in [PROJECT ROOT]/build/bin</p>
 
 <h1>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
@@ -328,7 +95,7 @@ The test executables will bein [PROJECT ROOT]/build/bin</p>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">RFUS maintained by <a href="https://github.com/rcythr">rcythr</a></p>
+        <p class="copyright">Honeydew maintained by <a href="https://github.com/rcythr">rcythr</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
