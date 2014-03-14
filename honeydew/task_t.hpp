@@ -1,5 +1,5 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew 
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
@@ -7,14 +7,14 @@
 #include <cstdint>
 #include <vector>
 
-namespace rfus
+namespace honeydew
 {
 
 /// Forward Declarations
 class join_semaphore_t;
 
 /**
-* Structure used in the actual RFUS implementation.
+* Structure used in the actual Honeydew implementation.
 */
 struct task_t
 {

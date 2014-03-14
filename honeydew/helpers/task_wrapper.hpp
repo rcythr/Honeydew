@@ -1,11 +1,11 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
-#include <rfus/task.hpp>
+#include <honeydew/task_t.hpp>
 
-namespace rfus
+namespace honeydew
 {
 
 /**
@@ -141,7 +141,7 @@ public:
 
     /**
     * Returns the associated task_t* of this object and then !empties this object!
-    *  This function is intended to be used by the RFUS implementing classes ONLY!
+    *  This function is intended to be used by the Honeydew implementing classes ONLY!
     * @return the root of the built task_t* structure.
     */
     task_t* close();

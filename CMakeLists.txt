@@ -1,8 +1,8 @@
-# This file is part of RFUS (Rich's Fast Userspace Scheduling)
-# RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+# This file is part of Honeydew 
+# Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 cmake_minimum_required(VERSION 2.8)
-project(RFUS)
+project(HONEYDEW)
 
 # Set up CMAKE settings
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -18,12 +18,12 @@ file(GLOB_RECURSE SOURCES "src/*.cc" "src/*.hpp" "include/*.hpp")
 include_directories(${CMAKE_SOURCE_DIR})
 
 # Build the lib using the cc files found above.
-add_library(rfus ${SOURCES})
-target_link_libraries(rfus pthread)
+add_library(honeydew ${SOURCES})
+target_link_libraries(honeydew pthread)
 
 # Output the includes into the build dir
-file(GLOB OUTPUT_INCLUDES "rfus/*.hpp")
-file(GLOB OUTPUT_HELPERS "rfus/helpers/*.hpp")
+file(GLOB OUTPUT_INCLUDES "honeydew/*.hpp")
+file(GLOB OUTPUT_HELPERS "honeydew/helpers/*.hpp")
 
 # Setup install stuff for make
 install(FILES ${OUTPUT_INCLUDES} DESTINATION ${CMAKE_BINARY_DIR}/include)

@@ -1,6 +1,8 @@
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 #pragma once
 
-#include <rfus/helpers/task_wrapper.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
 
 #include <queue>
 #include <functional>
@@ -10,7 +12,7 @@
 
 #include <iostream>
 
-namespace rfus
+namespace honeydew
 {
 namespace detail
 {
@@ -44,7 +46,7 @@ struct TimerComp
 }
 
 /**
-* A helper class that allows for the posting of tasks to a given RFUS.
+* A helper class that allows for the posting of tasks to a given Honeydew.
 *  timer_period is the time in DurationType around which the timer thread will check
 *  the queue of TimerTasks.
 *  DurationType is a std::chrono type (such as std::chrono::milliseconds) which defines the
@@ -56,10 +58,10 @@ class Timer
 public:
 
     /**
-    * Constructs a new Timer with the given rfus.
+    * Constructs a new Timer with the given honeydew.
     */
-    Timer(RFUSInterface* rfus)
-        : rfus(rfus)
+    Timer(Honeydew* honeydew)
+        : honeydew(honeydew)
     {
         // Initialize to 1.
         running.test_and_set();
@@ -123,7 +125,7 @@ private:
                 while(!queue.empty() && queue.top().next_time <= current_time)
                 {
                     detail::TimerTask top = queue.top();
-                    rfus->post(Task([=]() {
+                    honeydew->post(Task([=]() {
                         if(top.functor())
                         {
                             // Reschedule in the timer.
@@ -138,7 +140,7 @@ private:
         }
     }
 
-    RFUSInterface* rfus;
+    Honeydew* honeydew;
     std::thread timer_thread;
     std::atomic_flag running;
 

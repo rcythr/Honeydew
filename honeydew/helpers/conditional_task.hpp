@@ -1,12 +1,12 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/task_wrapper.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
 
-namespace rfus
+namespace honeydew
 {
 
 /**
@@ -21,13 +21,13 @@ public:
 
     /**
     * Creates a new conditional task using the given condition function and worker/priority.
-    * @arg rfus the RFUS to post on_true and on_false to as needed.
+    * @arg honeydew the Honeydew to post on_true and on_false to as needed.
     * @arg condition the conditional function to call when this task resolves
     * @arg worker the worker thread to run the conditional task on.
     * @arg priority the priority of the conditional task.
     */
-    ConditionalTask(RFUSInterface* rfus, std::function<bool()> condition, size_t worker=0, uint64_t priority=0)
-        : rfus(rfus)
+    ConditionalTask(Honeydew* honeydew, std::function<bool()> condition, size_t worker=0, uint64_t priority=0)
+        : honeydew(honeydew)
         , conditional(condition)
     {
     }
@@ -56,7 +56,7 @@ public:
 
     /**
     * Closes this task and returns the underlying task_t*.
-    * @return the task_t* generated and ready to be pushed to a RFUS.
+    * @return the task_t* generated and ready to be pushed to a Honeydew.
     */
     task_t* close()
     {
@@ -65,25 +65,25 @@ public:
 
         // Necessary to prevent capture of 'this'
         //   Dammit C++.
-        RFUSInterface*& rfus_copy = rfus;
+        Honeydew*& honeydew_copy = honeydew;
         std::function<bool()>& conditional_copy = conditional;
 
         return Task([=] () {
             if(conditional_copy())
             {
-                if(true_task) rfus_copy->post(true_task); 
+                if(true_task) honeydew_copy->post(true_task); 
                 if(false_task) delete false_task; 
             }
             else
             {
-                if(false_task) rfus_copy->post(false_task); 
+                if(false_task) honeydew_copy->post(false_task); 
                 if(true_task) delete true_task;
             }
         }, worker, priority).close();
     }
 
 private:
-    RFUSInterface* rfus;
+    Honeydew* honeydew;
     std::function<bool()> conditional;
     size_t worker;
     uint64_t priority;

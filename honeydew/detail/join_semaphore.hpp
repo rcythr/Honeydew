@@ -1,11 +1,11 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
 #include <atomic>
 
-namespace rfus
+namespace honeydew
 {
 
 /**

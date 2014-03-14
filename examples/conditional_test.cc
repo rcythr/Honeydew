@@ -1,20 +1,20 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 /**
 * This example shows the typical usage of the ConditionalTask 
 *   (helpers/conditional_task.hpp) helper class.
 */
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/conditional_task.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/conditional_task.hpp>
 
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 
-using namespace rfus;
+using namespace honeydew;
 
 int main(int argc, char* argv[])
 {
@@ -23,11 +23,11 @@ int main(int argc, char* argv[])
     std::mutex return_mut;
     std::condition_variable cv;
     
-    // It is always necessary to create a RFUS when using this library.
-    //   however it need not be placed into the RFUS global variable.
-    // In this case a ROUND_ROBIN rfus is created with 2 workers which grab
+    // It is always necessary to create a Honeydew when using this library.
+    //   however it need not be placed into the Honeydew global variable.
+    // In this case a ROUND_ROBIN honeydew is created with 2 workers which grab
     //   events one at a time.
-    RFUS = createRFUS(ROUND_ROBIN, 2, 1);
+    Honeydew* HONEYDEW = Honeydew::create(Honeydew::ROUND_ROBIN, 2, 1);
 
     // Here is the first test that returns true into the ConditionalTask
     // Output: 1 TRUE!
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
         
         // Create a new condtional task which has a functor which returns bool.
         //   This value will determine ifthe on_true Task or on_false task is executed.
-        RFUS->post(ConditionalTask(RFUS, [] () {
+        HONEYDEW->post(ConditionalTask(HONEYDEW, [] () {
             return true;
         }).on_true(Task([&] () {
             // Print out something to show we executed this task.
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         
         // Create a new condtional task which has a functor which returns bool.
         //   This value will determine ifthe on_true Task or on_false task is executed.
-        RFUS->post(ConditionalTask(RFUS, [] () {
+        HONEYDEW->post(ConditionalTask(HONEYDEW, [] () {
             return false;
         }).on_true(Task([&] () {
             // Print out something to show we executed this task.

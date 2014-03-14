@@ -1,4 +1,4 @@
-Note: For a prettier version of this README please see the project page : http://rcythr.github.io/RFUS
+Note: For a prettier version of this README please see the project page : http://rcythr.github.io/Honeydew
 
 #General
 
@@ -12,7 +12,7 @@ __Author:__ Richard W. Laughlin Jr. (@rcythr)
 
 ***
 
-This library allows a user to schedule tasks to be run on a collection of worker threads in a concurrent fashion. First a **RFUS** implementation must be created and stored in a pointer somewhere. The default is a singleton located in the rfus library.
+This library allows a user to schedule tasks to be run on a collection of worker threads in a concurrent fashion. First a **Honeydew** implementation must be created and stored in a pointer somewhere. The default is a singleton located in the Honeydew library.
 	
 In general, Worker-agnostic tasks can be scheduled on:
 
@@ -22,7 +22,7 @@ In general, Worker-agnostic tasks can be scheduled on:
 However, Tasks which are tied to a particular worker thread can only be scheduled within the worker (**Task Priority**)
 
 ---------------------------------------------------------------------------------------------------
-Currently there are four **RFUS** implementations:
+Currently there are four **Honeydew** implementations:
 * __ROUND_ROBIN__
     - Worker selection is **round robin**
     - Tasks are strictly **FIFO**
@@ -36,7 +36,7 @@ Currently there are four **RFUS** implementations:
     - Worker selection is onto the **least busy** worker
     - Tasks are reordered to **priority**
 
-Each has benefits and drawbacks which are discussed in the **rfus_type.hpp** file. The choice of implementation depends largely on the type of tasks you're processing and the rate at which they come in.
+Each has benefits and drawbacks which are discussed in the **honeydew_type.hpp** file. The choice of implementation depends largely on the type of tasks you're processing and the rate at which they come in.
 
 # Dependencies:
 

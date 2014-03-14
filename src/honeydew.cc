@@ -1,29 +1,26 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew 
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include <rfus/rfus.hpp>
-#include <rfus/detail/queue.hpp>
-#include <rfus/detail/binary_min_heap.hpp>
-#include <rfus/detail/counting_wrapper.hpp>
-#include <rfus/detail/join_semaphore.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/detail/queue.hpp>
+#include <honeydew/detail/binary_min_heap.hpp>
+#include <honeydew/detail/counting_wrapper.hpp>
+#include <honeydew/detail/join_semaphore.hpp>
 
 #include <thread>
 #include <vector>
 
-using namespace rfus;
-
-// Global State Management
-RFUSInterface* rfus::RFUS;
+using namespace honeydew;
 
 typedef CountingWrapper<Queue<task_t>> CountingQueue;
 typedef CountingWrapper<BinaryMinHeap<task_t>> PriorityCountingQueue;
 
 template<typename QueueType>
-struct RFUSImpl : public RFUSInterface
+struct HoneydewImpl : public Honeydew
 {
     typedef std::function<size_t(std::atomic_int_fast32_t&,task_t*,QueueType*,size_t)> FindQueueFunc;
 
-    RFUSImpl(size_t num_threads, size_t step_size, FindQueueFunc findQueue)
+    HoneydewImpl(size_t num_threads, size_t step_size, FindQueueFunc findQueue)
         : exception_handler(nullptr)
         , exception_worker(0)
         , exception_priority(0)
@@ -34,7 +31,7 @@ struct RFUSImpl : public RFUSInterface
         queues = new QueueType[num_threads];
         for(size_t i=0; i < num_threads; ++i)
         {
-            threads.emplace_back(std::bind(&RFUSImpl::run, this, &queues[i], step_size));
+            threads.emplace_back(std::bind(&HoneydewImpl::run, this, &queues[i], step_size));
         }
     }
 
@@ -93,7 +90,7 @@ struct RFUSImpl : public RFUSInterface
         }
     }
 
-    virtual RFUSInterface* post(task_t* task)
+    virtual Honeydew* post(task_t* task)
     {
         task_t* next;
         while(task != nullptr)
@@ -113,7 +110,7 @@ struct RFUSImpl : public RFUSInterface
         return this;
     }
 
-    RFUSInterface* set_exception_handler(std::function<void(std::exception_ptr)> handler, size_t worker=0, uint64_t priority=0) 
+    Honeydew* set_exception_handler(std::function<void(std::exception_ptr)> handler, size_t worker=0, uint64_t priority=0) 
     {
         exception_handler = handler;
         exception_worker = worker;
@@ -133,28 +130,28 @@ struct RFUSImpl : public RFUSInterface
 };
 
 /**
-* Creates a new RFUS of the given type.
-* @param type the type of the RFUS to create. This cooresponds to how resource-less events are scheduled.
+* Creates a new Honeydew of the given type.
+* @param type the type of the Honeydew to create. This cooresponds to how resource-less events are scheduled.
 * @param num_threads the number of workers to create. This affects the number of independent work queues.
 *                       if the number of resources > num_threads some resources will share a thread.
 * @param step_size the maximum number of events each worker removes from the queue at a time. 0 is infinite.
 */
-RFUSInterface* rfus::createRFUS(RFUSType type, size_t num_threads, size_t step_size)
+Honeydew* Honeydew::create(HoneydewType type, size_t num_threads, size_t step_size)
 {
     switch(type)
     {
     case ROUND_ROBIN:
-        return new RFUSImpl<Queue<task_t>>(num_threads, step_size,
+        return new HoneydewImpl<Queue<task_t>>(num_threads, step_size,
         [] (std::atomic_int_fast32_t& running_count, task_t* task, Queue<task_t>* queues, size_t num_queues) {
             return running_count.fetch_add(1) % num_queues;
         });
     case ROUND_ROBIN_WITH_PRIORITY:
-        return new RFUSImpl<BinaryMinHeap<task_t>>(num_threads, step_size,
+        return new HoneydewImpl<BinaryMinHeap<task_t>>(num_threads, step_size,
         [] (std::atomic_int_fast32_t& running_count, task_t* task, BinaryMinHeap<task_t>* queues, size_t num_queues) {
             return running_count.fetch_add(1) % num_queues;
         });
     case LEAST_BUSY:
-        return new RFUSImpl<CountingQueue>(num_threads, step_size,
+        return new HoneydewImpl<CountingQueue>(num_threads, step_size,
         [] (std::atomic_int_fast32_t& running_count, task_t* task, CountingQueue* queues, size_t num_queues) {
             size_t least_busy = 0;
             size_t least_busy_amt = queues[0].size();
@@ -170,7 +167,7 @@ RFUSInterface* rfus::createRFUS(RFUSType type, size_t num_threads, size_t step_s
             return least_busy;
         });
     case LEAST_BUSY_WITH_PRIORITY:
-        return new RFUSImpl<PriorityCountingQueue>(num_threads, step_size,
+        return new HoneydewImpl<PriorityCountingQueue>(num_threads, step_size,
         [] (std::atomic_int_fast32_t& running_count, task_t* task, PriorityCountingQueue* queues, size_t num_queues) {
             size_t least_busy = 0;
             size_t least_busy_amt = queues[0].size();

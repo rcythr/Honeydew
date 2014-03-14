@@ -1,10 +1,10 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew 
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include <rfus/helpers/task_wrapper.hpp>
-#include <rfus/detail/join_semaphore.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
+#include <honeydew/detail/join_semaphore.hpp>
 
-using namespace rfus;
+using namespace honeydew;
 
 Task::Task()
     : root(nullptr)

@@ -1,12 +1,14 @@
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/timer.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/timer.hpp>
 
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
 
-using namespace rfus;
+using namespace honeydew;
 
 int main(int argc, char* argv[])
 {
@@ -14,9 +16,9 @@ int main(int argc, char* argv[])
     std::condition_variable cv;
     bool complete = false;
 
-    RFUS = createRFUS(ROUND_ROBIN, 3, 1);
+    Honeydew* HONEYDEW = Honeydew::create(Honeydew::ROUND_ROBIN, 3, 1);
 
-    Timer<100> t(RFUS); // Specified in nanoseconds.
+    Timer<100> t(HONEYDEW); // Specified in nanoseconds.
     int counter = 0;
 
     std::unique_lock<std::mutex> lg(mut);

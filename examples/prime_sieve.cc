@@ -1,25 +1,25 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 /**
-* This example uses a RFUS to calculate all the prime numbers up to a given number.
+* This example uses a Honeydew to calculate all the prime numbers up to a given number.
 *   It should be noted that this is not the most efficient way to implement a sieve
 *   (Every number's multiple is used instead of the next prime remaining after each pass)
 *   but it allows for some concurrency to do it this way.
 */
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/task_wrapper.hpp>
-#include <rfus/helpers/post_and_wait.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
+#include <honeydew/helpers/post_and_wait.hpp>
 
 #include <iostream>
 #include <thread>
 #include <atomic>
 
-using namespace rfus;
+using namespace honeydew;
 
 /*
-* This file is a practical example of RFUS in use.
+* This file is a practical example of Honeydew in use.
 */
 int main(int argc, char* argv[])
 {
@@ -40,8 +40,8 @@ int main(int argc, char* argv[])
         sieve[i-2].store(i);
     }
 
-    // Initialize the RFUS
-    RFUS = createRFUS(ROUND_ROBIN, std::thread::hardware_concurrency(), 0);
+    // Initialize the Honeydew
+    Honeydew* HONEYDEW = Honeydew::create(Honeydew::ROUND_ROBIN, std::thread::hardware_concurrency(), 0);
 
     // Schedule the tasks
     Task task([] () {});
@@ -68,8 +68,8 @@ int main(int argc, char* argv[])
         printf("\n");
     });
 
-    // Post to the RFUS.
-    post_and_wait(RFUS, task);
+    // Post to the Honeydew.
+    post_and_wait(HONEYDEW, task);
 
     return 0;
 }

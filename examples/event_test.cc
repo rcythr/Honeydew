@@ -1,17 +1,17 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 /*
 * This example shows the typical syntax associated with the EventProcessor 
-*   (helpers/event_processor.hpp) helper class.
+*   (honeydew/helpers/event_processor.hpp) helper class.
 */
 
-#include <rfus/helpers/event_processor.hpp>
+#include <honeydew/helpers/event_processor.hpp>
 
 #include <mutex>
 #include <condition_variable>
 
-using namespace rfus;
+using namespace honeydew;
 
 /**
  * This little event type is used in the bind_constructable use case shown below.
@@ -48,14 +48,14 @@ int main(int argc, char* argv[])
     std::condition_variable cv;
     bool complete = false;
     
-    // It is always necessary to create a RFUS when using this library.
-    //   however it need not be placed into the RFUS global variable.
-    // In this case a ROUND_ROBIN rfus is created with 2 workers which grab
+    // It is always necessary to create a Honeydew when using this library.
+    //   however it need not be placed into the Honeydew global variable.
+    // In this case a ROUND_ROBIN honeydew is created with 2 workers which grab
     //   events one at a time.
-    RFUS = createRFUS(ROUND_ROBIN, 2, 1);
+    Honeydew* HONEYDEW = Honeydew::create(Honeydew::ROUND_ROBIN, 2, 1);
 
-    // Next we create an EventProcessor using the KeyType we want and rfus we want
-    EventProcessor<int> event_system(RFUS);
+    // Next we create an EventProcessor using the KeyType we want and honeydew we want
+    EventProcessor<int> event_system(HONEYDEW);
 
     // Now we bind into the event processor a single event type with handler function.
     event_system.bind_constructable<MockEventType>(35, 
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
     // Post the event which uses the key and data we created above.
     event_system.post_event(35, val);
 
-    // Now the main thread waits for the RFUS to process the event we just posted.
+    // Now the main thread waits for the Honeydew to process the event we just posted.
     while(!complete)
         cv.wait(lg);
 

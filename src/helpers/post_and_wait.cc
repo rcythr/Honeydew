@@ -1,16 +1,18 @@
+// This file is part of Honeydew 
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
-#include <rfus/helpers/post_and_wait.hpp>
+#include <honeydew/helpers/post_and_wait.hpp>
 
 #include <mutex>
 #include <condition_variable>
 
-void rfus::post_and_wait(RFUSInterface* rfus, Task& task)
+void honeydew::post_and_wait(Honeydew* honeydew, Task& task)
 {
     std::mutex mut;
     std::condition_variable cv;
     bool complete = false;
 
-    rfus->post(task.then([&] () {
+    honeydew->post(task.then([&] () {
         {
             std::unique_lock<std::mutex> lg(mut);
             complete = true;

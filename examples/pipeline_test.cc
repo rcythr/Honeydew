@@ -1,5 +1,5 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 /**
 *  This file shows some possible use cases for the Pipeline helper class
@@ -9,15 +9,15 @@
 *     is vital to understanding its behavior.
 */
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/pipeline.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/pipeline.hpp>
 
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 
-using namespace rfus;
+using namespace honeydew;
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     std::condition_variable cv;
     bool complete = false;
 
-    RFUS = createRFUS(ROUND_ROBIN, 2, 1);
+    Honeydew* HONEYDEW = Honeydew::create(Honeydew::ROUND_ROBIN, 2, 1);
 
     std::unique_lock<std::mutex> lg(return_mut);
     complete = false;
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     // Output:
     //         5
     //         'a'
-    RFUS->post(Pipeline::start<int>([] () { 
+    HONEYDEW->post(Pipeline::start<int>([] () { 
         return 5; 
     }).then<char>([] (int val) { 
         printf("%d\n", val); 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     //        42
     //        42
     //        46
-    RFUS->post(Pipeline::start<int>([] () {
+    HONEYDEW->post(Pipeline::start<int>([] () {
         return 42;
     }).split<int>([] (int val) { // In: 42, Out: 45.
         return val+3;

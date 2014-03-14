@@ -1,15 +1,15 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/task_wrapper.hpp>
-#include <rfus/helpers/pipeline.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
+#include <honeydew/helpers/pipeline.hpp>
 
 #include <unordered_map>
 
-namespace rfus
+namespace honeydew
 {
 
 namespace detail
@@ -25,7 +25,7 @@ struct GenericFunction
 }
 
 /**
-* A class which uses a RFUS to do dispatching of events.
+* A class which uses a Honeydew to do dispatching of events.
 *  Different events can be setup to dispatch to different threads as needed.
 */
 template<typename KeyType>
@@ -34,10 +34,10 @@ struct EventProcessor
 public:
 
     /**
-    * Constructs a new EventProcessor which will run on the given RFUS.
+    * Constructs a new EventProcessor which will run on the given Honeydew.
     */
-    EventProcessor(RFUSInterface* rfus)
-        : rfus(rfus)
+    EventProcessor(Honeydew* honeydew)
+        : honeydew(honeydew)
     {
     }
 
@@ -63,7 +63,7 @@ public:
                                        size_t handler_worker=0, uint64_t handler_priority=0,
                                        size_t construction_worker=0, uint64_t construction_priority=0) 
     {
-        RFUSInterface*& rfus_copy = rfus;
+        Honeydew*& honeydew_copy = honeydew;
         if(construction_worker == handler_worker)
         {
             event_handlers.emplace(
@@ -80,7 +80,7 @@ public:
                 key_value,
                 detail::GenericFunction{[=](void* data) {
                     auto event = new EventDataType(static_cast<CastType*>(data));
-                    rfus_copy->post(Task([=] () {
+                    honeydew_copy->post(Task([=] () {
                         handler(*event);
                         delete event;
                     }, handler_worker, handler_priority));
@@ -111,7 +111,7 @@ public:
     }
 
     /**
-    * Posts a new event with the given key_value to the RFUS.
+    * Posts a new event with the given key_value to the Honeydew.
     * @arg key_value the identifying value of the event handler.
     * @arg data a pointer to the data to be passed into the event handler.
     * @return a reference to this object for daisy chaining.
@@ -122,13 +122,13 @@ public:
         if(find_itr != event_handlers.end())
         {
             detail::GenericFunction& func = find_itr->second;
-            rfus->post(Task([=] () { func.func(data); }, func.worker, func.priority));
+            honeydew->post(Task([=] () { func.func(data); }, func.worker, func.priority));
         }
         return *this;
     }
    
 private: 
-    RFUSInterface* rfus;
+    Honeydew* honeydew;
     std::unordered_map<KeyType, detail::GenericFunction> event_handlers;
 };
 

@@ -1,15 +1,15 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
-#include <rfus/helpers/task_wrapper.hpp>
-#include <rfus/detail/join_semaphore.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
+#include <honeydew/detail/join_semaphore.hpp>
 
 #include <utility>
 #include <type_traits>
 
-namespace rfus
+namespace honeydew
 {
 
 namespace detail
@@ -181,7 +181,7 @@ struct Pipeline<void>
     * @arg action the action to execute
     * @arg worker the worker to run this action upon.
     * @arg deadline a priority value to use. This value is relative to the previous task.
-    * @return a task_t* object for a RFUS. 
+    * @return a task_t* object for a Honeydew. 
     */
     template<typename ReturnType>
     task_t* close_with(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
@@ -195,7 +195,7 @@ struct Pipeline<void>
     * @arg action the action to execute
     * @arg worker the worker to run this action upon.
     * @arg deadline a priority value to use. This value is absolute.
-    * @return a task_t* object for a RFUS. 
+    * @return a task_t* object for a Honeydew. 
     */
     template<typename ReturnType>
     task_t* close_with_absolute(std::function<ReturnType()> action, size_t worker=0, uint64_t deadline=0)
@@ -206,7 +206,7 @@ struct Pipeline<void>
     
     /**
     * Closes the current pipeline
-    * @return a task_t* which can be used by a RFUS.
+    * @return a task_t* which can be used by a Honeydew.
     */
     task_t* close()
     {
@@ -435,7 +435,7 @@ struct ForkedPipeline
 
     /*
     * Closes the pipeline.
-    * @return a task_t* which can be used by a RFUS.
+    * @return a task_t* which can be used by a Honeydew.
     */
     task_t* close()
     {
@@ -529,7 +529,7 @@ struct Pipeline
     * @arg action the action to execute
     * @arg worker the worker to run this action upon.
     * @arg deadline a priority value to use. This value is relative to the previous task.
-    * @return a task_t* object for a RFUS. 
+    * @return a task_t* object for a Honeydew. 
     */
     template<typename ReturnType>
     task_t* close_with(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
@@ -544,7 +544,7 @@ struct Pipeline
     * @arg action the action to execute
     * @arg worker the worker to run this action upon.
     * @arg deadline a priority value to use. This value is absolute.
-    * @return a task_t* object for a RFUS. 
+    * @return a task_t* object for a Honeydew. 
     */
     template<typename ReturnType>
     task_t* close_with_absolute(std::function<ReturnType(PrevReturn)> action, size_t worker=0, uint64_t deadline=0)
@@ -602,7 +602,7 @@ struct Pipeline
 
     /**
     * Ends the pipeline early. The final return value will be discarded.
-    * @return the task_t* object which can be inserted into a RFUS.
+    * @return the task_t* object which can be inserted into a Honeydew.
     */    
     task_t* close()
     {

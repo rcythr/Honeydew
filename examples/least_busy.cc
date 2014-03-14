@@ -1,5 +1,5 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 /*
 * In this test the program will run tasks A-F concurrently assigning them in a LEAST_BUSY
@@ -7,22 +7,22 @@
 * on the main thread which will then exit, ending the program.
 */
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/task_wrapper.hpp>
-#include <rfus/helpers/post_and_wait.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
+#include <honeydew/helpers/post_and_wait.hpp>
 
 #include <iostream>
 #include <thread>
 
-using namespace rfus;
+using namespace honeydew;
 
 int main(int argc, char* argv[])
 {
-    // It is always necessary to create a RFUS when using this library.
-    //   however it need not be placed into the RFUS global variable.
-    // In this case a LEAST_BUSY rfus is created with 3 workers which grab
+    // It is always necessary to create a Honeydew when using this library.
+    //   however it need not be placed into the Honeydew global variable.
+    // In this case a LEAST_BUSY honeydew is created with 3 workers which grab
     //   events two at a time.
-    RFUS = createRFUS(LEAST_BUSY, 3, 2);
+    Honeydew* HONEYDEW = Honeydew::create(Honeydew::LEAST_BUSY, 3, 2);
 
     /**
     *  All of the following tasks are pushed onto the least busy queue at
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     *       [A-F on undefined threads in undefined order]
     *       [G on undefined thread]
     */
-    post_and_wait(RFUS, Task([] () {
+    post_and_wait(HONEYDEW, Task([] () {
         std::cout << std::this_thread::get_id() << " A" << std::endl;
     }).also([] () {
         std::cout << std::this_thread::get_id() << " B" << std::endl;

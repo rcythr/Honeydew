@@ -1,12 +1,12 @@
-// This file is part of RFUS (Rich's Fast Userspace Scheduling)
-// RFUS is licensed under the MIT LICENSE. See the LICENSE file for more info.
+// This file is part of Honeydew
+// Honeydew is licensed under the MIT LICENSE. See the LICENSE file for more info.
 
 #pragma once
 
-#include <rfus/rfus.hpp>
-#include <rfus/helpers/task_wrapper.hpp>
+#include <honeydew/honeydew.hpp>
+#include <honeydew/helpers/task_wrapper.hpp>
 
-namespace rfus
+namespace honeydew
 {
 
 /**
@@ -24,13 +24,13 @@ public:
     
     /**
     * Creates a new Exception task.
-    * @arg rfus the RFUS instance to post on_success and on_failure tasks to, if needed.
+    * @arg honeydew the Honeydew instance to post on_success and on_failure tasks to, if needed.
     * @arg functor the function to wrap.
     * @arg worker the thread to run the wrapped function upon.
     * @arg priority the priority of the wrapped task.
     */
-    ExceptionTask(RFUSInterface* rfus, std::function<void()> functor, size_t worker=0, uint64_t priority=0)
-        : rfus(rfus)
+    ExceptionTask(Honeydew* honeydew, std::function<void()> functor, size_t worker=0, uint64_t priority=0)
+        : honeydew(honeydew)
         , functor(functor)
         , worker(worker)
         , priority(priority)
@@ -75,8 +75,8 @@ public:
 
     /**
     * Wraps up the task, on_success, and on_failure tasks into a task that can be posted
-    *  to a RFUS.
-    * @return The RFUS postable task of this wrapper.
+    *  to a Honeydew.
+    * @return The Honeydew postable task of this wrapper.
     */
     task_t* close()
     {
@@ -85,7 +85,7 @@ public:
         // Required to prevent capture of this instead of the actual fields.
         //  Dammit C++.
         std::function<void()>& functor_copy = functor;
-        RFUSInterface*& rfus_copy = rfus;                
+        Honeydew*& honeydew_copy = honeydew;                
         std::function<void(ExceptionType&)>& handler_copy = handler;
 
         if(handler)
@@ -94,7 +94,7 @@ public:
                 try
                 {
                     functor_copy();
-                    rfus_copy->post(success_task);
+                    honeydew_copy->post(success_task);
                 }
                 catch(ExceptionType e)
                 {
@@ -110,12 +110,12 @@ public:
                 try
                 {
                     functor_copy();
-                    if(success_task) rfus_copy->post(success_task); 
+                    if(success_task) honeydew_copy->post(success_task); 
                     if(failure_task) delete failure_task;
                 }
                 catch(ExceptionType e)
                 {
-                    if(failure_task) rfus_copy->post(failure_task); 
+                    if(failure_task) honeydew_copy->post(failure_task); 
                     if(success_task) delete success_task;
                 }
             }, worker, priority).close();
@@ -123,7 +123,7 @@ public:
     }
     
 private:
-    RFUSInterface* rfus;
+    Honeydew* honeydew;
     std::function<void()> functor;
     size_t worker;
     uint64_t priority;
