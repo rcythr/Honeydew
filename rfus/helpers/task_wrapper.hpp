@@ -31,14 +31,14 @@ public:
     Task(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
-    * Move constructor.
-    */
-    Task(Task&& other);
-
-    /**
     * Deleted copy constructor.
     */
     Task(const Task& other) = delete;
+
+    /**
+    * Move constructor.
+    */
+    Task(Task&& other);
 
     /**
     * Initializes a previously uninitialized task. This function throws std::runtime_error
@@ -77,6 +77,15 @@ public:
     */
     Task& then_absolute(std::function<void()> action, size_t worker=0,  uint64_t deadline=0);
 
+    /*
+    * Adds another task_t heirarchy as a then relationship to the end of this Task structure.
+    *  The root of the resulting structure is then returned.
+    * @arg other the root of another task heirarchy.
+    * @return the root of this Task structure.
+    */
+    task_t* then_close(task_t* other);
+    template<typename TaskType> task_t* then_close(TaskType&& other) { return then_close(other.close()); }
+
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
     *  on the associated worker thread. Further tasks will wait for this task to complete.
@@ -96,6 +105,15 @@ public:
     Task& also_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
 
     /**
+    * Adds another task_t* structure as an also relationship to this task. The other heirarchy
+    *  will take place at the same time as the last level of tasks in this hierarchy. This task is then
+    *  closed
+    * @arg other the root of the other task heirarchy.
+    */
+    task_t* also_close(task_t* other);
+    template<typename TaskType> task_t* also_close(TaskType&& other) { return also_close(other.close()); }
+    
+    /**
     * Schedules a task to occur concurrently with the previous task with the given priority
     *  on the associated worker thread. Further tasks will not wait for this task to complete.
     * @arg action the task to perform.
@@ -112,6 +130,14 @@ public:
     * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
     */
     Task& fork_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+   
+    /**
+    * Adds another task heirarchy as a forked task onto this heirarchy.
+    * @arg other the other task heirarchy to fork from the current leaf of this heirarchy.
+    * @return this task.
+    */ 
+    Task& fork(task_t* other);
+    template<typename TaskType> Task& fork(TaskType& other) { return fork(other.close()); }
 
     /**
     * Returns the associated task_t* of this object and then !empties this object!
@@ -120,6 +146,7 @@ public:
     */
     task_t* close();
 
+   
 private:
     task_t *root, *or_root, *leaf;
 };
