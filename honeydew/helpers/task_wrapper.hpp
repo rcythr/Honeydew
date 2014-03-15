@@ -83,7 +83,7 @@ public:
     * @return a reference to this task for daisy chaining. 
     */
     Task& then(task_t* other);
-    template<typename TaskType> Task& then(TaskType&& other) { return then_close(other.close()); }
+    template<typename TaskType> Task& then(TaskType&& other) { return then(other.close()); }
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
@@ -110,7 +110,7 @@ public:
     * @return a reference to this task for daisy chaining.
     */
     Task& also(task_t* other);
-    template<typename TaskType> Task& also(TaskType&& other) { return also_close(other.close()); }
+    template<typename TaskType> Task& also(TaskType&& other) { return also(other.close()); }
     
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
