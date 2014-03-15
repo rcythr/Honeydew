@@ -23,12 +23,12 @@ public:
     Task();
         
     /**
-    * Constructs a new task object with a given deadline.
+    * Constructs a new task object with a given priority.
     * @arg function to schedule and call on the associated worker thread.
     * @arg worker the associated thread on which to run this action. Worker=0 means any worker.
-    * @arg deadline the absolute deadline (priority) of this call.
+    * @arg priority the absolute priority (priority) of this call.
     */
-    Task(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task(std::function<void()> action, size_t worker=0, uint64_t priority=0);
 
     /**
     * Deleted copy constructor.
@@ -44,7 +44,7 @@ public:
     * Initializes a previously uninitialized task. This function throws std::runtime_error
     *  if the task was previously initialized.
     */
-    void init(std::function<void()> action=0, size_t worker=0, uint64_t deadline=0);
+    void init(std::function<void()> action=0, size_t worker=0, uint64_t priority=0);
 
     /**
     * Deleted copy assignment.
@@ -64,72 +64,71 @@ public:
     *   on the given worker thread
     * @arg action the task to be performed.
     * @arg worker the associated worker for this task to run on. Worker=0 means any worker.
-    * @arg deadline the priority of the task (added to the previous task's deadline).
+    * @arg priority the priority of the task (added to the previous task's priority).
     */
-    Task& then(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& then(std::function<void()> action, size_t worker=0, uint64_t priority=0);
 
     /**
     * Schedules a task with the given priority to be run after the previous task(s)
     *   on the given worker thread
     * @arg action the task to be performed.
     * @arg worker the associated worker for this task to run on. Worker=0 means any worker.
-    * @arg deadline the priority of the task (absolute, not added to previous task's deadline).
+    * @arg priority the priority of the task (absolute, not added to previous task's priority).
     */
-    Task& then_absolute(std::function<void()> action, size_t worker=0,  uint64_t deadline=0);
+    Task& then_absolute(std::function<void()> action, size_t worker=0,  uint64_t priority=0);
 
     /*
     * Adds another task_t heirarchy as a then relationship to the end of this Task structure.
-    *  The root of the resulting structure is then returned.
     * @arg other the root of another task heirarchy.
-    * @return the root of this Task structure.
+    * @return a reference to this task for daisy chaining. 
     */
-    task_t* then_close(task_t* other);
-    template<typename TaskType> task_t* then_close(TaskType&& other) { return then_close(other.close()); }
+    Task& then(task_t* other);
+    template<typename TaskType> Task& then_close(TaskType&& other) { return then_close(other.close()); }
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
     *  on the associated worker thread. Further tasks will wait for this task to complete.
     * @arg action the task to perform.
     * @arg worker the associated worker thread. Worker=0 means any worker.
-    * @arg deadline the priority of the task. (added to the previous task's deadline).
+    * @arg priority the priority of the task. (added to the previous task's priority).
     */
-    Task& also(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& also(std::function<void()> action, size_t worker=0, uint64_t priority=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
     *  on the associated worker thread. Further tasks will wait for this task to complete.
     * @arg action the task to perform.
     * @arg worker the associated worker thread. Worker=0 means any worker.
-    * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
+    * @arg priority the absolute priority of the task. (not added to the previous task's priority).
     */
-    Task& also_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& also_absolute(std::function<void()> action, size_t worker=0, uint64_t priority=0);
 
     /**
     * Adds another task_t* structure as an also relationship to this task. The other heirarchy
-    *  will take place at the same time as the last level of tasks in this hierarchy. This task is then
-    *  closed
+    *  will take place at the same time as the last level of tasks in this hierarchy.
     * @arg other the root of the other task heirarchy.
+    * @return a reference to this task for daisy chaining.
     */
-    task_t* also_close(task_t* other);
-    template<typename TaskType> task_t* also_close(TaskType&& other) { return also_close(other.close()); }
+    Task& also(task_t* other);
+    template<typename TaskType> Task& also(TaskType&& other) { return also_close(other.close()); }
     
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
     *  on the associated worker thread. Further tasks will not wait for this task to complete.
     * @arg action the task to perform.
     * @arg worker the associated worker thread. Worker=0 means any worker.
-    * @arg deadline the priority of the task. (added to the previous task's deadline).
+    * @arg priority the priority of the task. (added to the previous task's priority).
     */
-    Task& fork(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& fork(std::function<void()> action, size_t worker=0, uint64_t priority=0);
 
     /**
     * Schedules a task to occur concurrently with the previous task with the given priority
     *  on the associated worker thread. Further tasks will not wait for this task to complete.
     * @arg action the task to perform.
     * @arg worker the associated worker thread. Worker=0 means any worker.
-    * @arg deadline the absolute priority of the task. (not added to the previous task's deadline).
+    * @arg priority the absolute priority of the task. (not added to the previous task's priority).
     */
-    Task& fork_absolute(std::function<void()> action, size_t worker=0, uint64_t deadline=0);
+    Task& fork_absolute(std::function<void()> action, size_t worker=0, uint64_t priority=0);
    
     /**
     * Adds another task heirarchy as a forked task onto this heirarchy.

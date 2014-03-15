@@ -63,24 +63,49 @@ Task& Task::then(std::function<void()> action, size_t worker, uint64_t deadline)
 
 Task& Task::then_absolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
+    join_semaphore_t* root_sem = nullptr;
+
     leaf = leaf->continuation = new task_t(action, worker, deadline);
-    while(or_root != nullptr)
+
+    if(or_root != nullptr)
     {
-        or_root->continuation = leaf;
-        or_root = or_root->next;
+        root_sem = or_root->join;
+
+        while(or_root != nullptr && or_root->join == root_sem)
+        {
+            or_root->continuation = leaf;
+            or_root = or_root->next;
+        }
+        or_root = nullptr;
     }
     return *this;
 }
 
-task_t* Task::then_close(task_t* other)
+Task& Task::then(task_t* other)
 {
+    join_semaphore_t* root_sem = nullptr;
     leaf = leaf->continuation = other;
-    while(or_root != nullptr)
+    
+    // Fix up previous also join, if exists
+    if(or_root != nullptr)
     {
-        or_root->continuation = leaf;
-        or_root = or_root->next;
+        root_sem = or_root->join;
+
+        while(or_root != nullptr && or_root->join == root_sem)
+        {
+            or_root->continuation = leaf;
+            or_root = or_root->next;
+        }
+        or_root = nullptr;
     }
-    return this->close();
+
+    // Fix up leaf pointer.
+    while(leaf->continuation != nullptr)
+    {
+        leaf = leaf->continuation;
+    }
+
+    return *this;
 }
 
 Task& Task::also(std::function<void()> action, size_t worker, uint64_t deadline)
@@ -91,6 +116,8 @@ Task& Task::also(std::function<void()> action, size_t worker, uint64_t deadline)
 Task& Task::also_absolute(std::function<void()> action, size_t worker, uint64_t deadline)
 {
     join_semaphore_t* join;
+    task_t* new_task = new task_t(action, worker, deadline);
+    
     if(leaf->join == nullptr)
     {
         or_root = leaf;
@@ -101,27 +128,19 @@ Task& Task::also_absolute(std::function<void()> action, size_t worker, uint64_t 
         join = leaf->join;
         join->increment();
     }
-    leaf = leaf->next = new task_t(action, worker, deadline);
+
+    if(leaf->next != nullptr) 
+    { 
+        new_task->next = leaf->next; 
+    }
+    leaf = leaf->next = new_task;
     leaf->join = join;
     return *this;
 }
 
-task_t* Task::also_close(task_t* other)
+Task& Task::also(task_t* other)
 {
-    join_semaphore_t* join;
-    if(leaf->join == nullptr)
-    {
-        or_root = leaf;
-        join = leaf->join = new join_semaphore_t(2);
-    }
-    else
-    {
-        join = leaf->join;
-        join->increment();
-    }
-    leaf = leaf->next = other; 
-    leaf->join = join;
-    return this->close();
+    return *this;
 }
 
 Task& Task::fork(std::function<void()> action, size_t worker, uint64_t deadline)
