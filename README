@@ -28,7 +28,6 @@ To simply build the library and include directories into a build folder, from co
     mkdir build
     cd build
     cmake ..
-    make
     make install
 
 The library will be in [PROJECT ROOT]/build/lib
